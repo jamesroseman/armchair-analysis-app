@@ -1,58 +1,31 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import PlayerDashboardPassingTableComponent from '../components/PlayerDashboardPassingTableComponent';
+import PlayerDashboardGamePerformanceLineChartComponent from '../components/QuarterbackDashboardGamePerformanceLineChartComponent';
+import GetPlayerFromAbbrQuery from '../queries/GetDashPlayerFromPlayerAbbrQuery';
+import { Player } from '../types/PlayerDashboardTypes';
+import PlayerDashboardPassingInsightsTableComponent from '../components/PlayerDashboardPassingInsightsTableComponent';
+import { aggregateQuarterbackGameData } from '../transformers/PlayerDashboardDataTransformers';
 
-type DashboardPlayerGame = {
-  gameId: string,
-  passingAttemptsAmt: number,
-  passingCompletionsAmt: number,
-  seasonYear: number
-}
-
-type DashboardPlayer = {
-  demographicData: {
-    playerAbbr: string,
-    firstName: string,
-    lastName: string
-  };
-  playerGames: DashboardPlayerGame[];
-}
 
 type DashboardPlayerQueryResponse = {
   loading: boolean;
   data: {
-    dashPlayer: DashboardPlayer;
+    dashPlayer: Player;
   }
 }
-
-export const GET_PLAYER = gql`
-  query GetPlayer($playerAbbr:String!){
-    dashPlayer(playerAbbr: $playerAbbr) {
-      demographicData {
-        playerAbbr,
-        firstName,
-        lastName
-      },
-      playerGames {
-        gameId,
-        passingAttemptsAmt,
-        passingCompletionsAmt,
-        seasonYear
-      }
-    }
-  }
-`;
 
 type PlayerViewerProps = {
   playerAbbr: string
 }
 
 export default ({ playerAbbr }: PlayerViewerProps) => (
-  <Query query={GET_PLAYER} variables={{ playerAbbr }}>
+  <Query query={GetPlayerFromAbbrQuery} variables={{ playerAbbr }}>
     {({ loading, data }: DashboardPlayerQueryResponse) => !loading && (
       <div>
-        <h1>{data.dashPlayer.demographicData.firstName} {data.dashPlayer.demographicData.lastName} Player Dashboard</h1>
+        <h1>{data.dashPlayer.demographicData.firstName} {data.dashPlayer.demographicData.lastName} Player Dashboard ({data.dashPlayer.demographicData.primaryPosition})</h1>
+        <PlayerDashboardGamePerformanceLineChartComponent data={data.dashPlayer.playerGames} />
+        <PlayerDashboardPassingInsightsTableComponent aggregation={aggregateQuarterbackGameData(data.dashPlayer.playerGames)} />
         <PlayerDashboardPassingTableComponent player={data.dashPlayer} />
       </div>
     )}

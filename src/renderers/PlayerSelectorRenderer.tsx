@@ -1,7 +1,7 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
+import GetPlayerAbbrFromNameQuery from '../queries/GetDashPlayerTypeaheadFromNameQuery';
 
 type DashboardPlayerTypeahead = {
   firstName: string,
@@ -16,23 +16,13 @@ type DashboardPlayerQueryResponse = {
   }
 }
 
-export const GET_PLAYER_ABBR = gql`
-  query GetPlayerAbbrFromName($lastName: String){
-    dashPlayerTypeahead(lastName: $lastName) {
-      firstName,
-      lastName,
-      playerAbbr
-    }
-  }
-`;
-
 type PlayerSelectorRendererProps = {
   lastName?: string
 }
 
 const PlayerSelectorRenderer = ({ lastName }: PlayerSelectorRendererProps) => {
   return (!lastName || lastName.length < 2) ? null : (
-    <Query query={GET_PLAYER_ABBR} variables={{ lastName }}>
+    <Query query={GetPlayerAbbrFromNameQuery} variables={{ lastName }}>
       {({ loading, data }: DashboardPlayerQueryResponse) => !loading && (
         <ul>
           {data.dashPlayerTypeahead.map((player) => (

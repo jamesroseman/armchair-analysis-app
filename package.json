@@ -1,6 +1,6 @@
 {
-  "name": "pokemon-relay-app",
-  "version": "0.1.0",
+  "name": "armchair-analysis-app",
+  "version": "0.0.1",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -13,6 +13,7 @@
     "@types/react-relay": "^7.0.8",
     "@types/react-router-dom": "^5.1.5",
     "@types/reactstrap": "^8.5.1",
+    "@types/recharts": "^1.8.14",
     "@types/relay-runtime": "^10.0.3",
     "apollo-boost": "0.1.16",
     "babel-plugin-relay": "^10.0.1",
@@ -21,10 +22,12 @@
     "react": "^16.13.1",
     "react-apollo": "2.1.11",
     "react-dom": "^16.13.1",
+    "react-linechart": "^1.1.12",
     "react-relay": "^10.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "reactstrap": "6.4.0",
+    "recharts": "^1.8.5",
     "relay-runtime": "^10.0.1",
     "typescript": "~3.7.2"
   },

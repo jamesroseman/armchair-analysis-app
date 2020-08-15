@@ -5,20 +5,25 @@ import {
   Route,
   useParams
 } from 'react-router-dom';
+import styles from './App.module.css';
 
 import PlayerDashboardContainer from './containers/PlayerDashboardContainer';
 import PlayerSelectorContainer from './containers/PlayerSelectorContainer';
 
 function App() {
   return (
-    <Router>
+    <div className={styles.App}>
+      <Router>
         <Switch>
           <Route exact path='/'>
             <PlayerSelectorContainer />
           </Route>
-          <Route path='/p/:playerAbbr'><PlayerDashboardContainerRoute /></Route>
+          <Route path='/p/:playerAbbr'>
+            <PlayerDashboardContainerRoute />
+          </Route>
         </Switch>
-    </Router>
+      </Router>
+    </div>
   );
 }
 

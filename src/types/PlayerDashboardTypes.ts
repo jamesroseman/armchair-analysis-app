@@ -1,0 +1,17 @@
+import { QuarterbackGame } from "./QuarterbackDashboardTypes";
+
+export enum PlayerPosition {
+  Quarterback = "QB",
+  Runningback = "RB",
+  WideReceiver = "WR"
+}
+
+export type Player = {
+  demographicData: {
+    playerAbbr: string,
+    firstName: string,
+    lastName: string,
+    primaryPosition: PlayerPosition
+  };
+  playerGames: QuarterbackGame[];
+}
