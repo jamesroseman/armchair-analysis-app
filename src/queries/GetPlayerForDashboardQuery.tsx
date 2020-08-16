@@ -13,6 +13,7 @@ export default gql`
         gameId,
         passingAttemptsAmt,
         passingCompletionsAmt,
+        passingTouchdownsAmt,
         seasonYear
       }
     }

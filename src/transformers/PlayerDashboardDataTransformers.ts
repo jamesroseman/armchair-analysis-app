@@ -4,6 +4,7 @@ export function aggregateQuarterbackGameData(games: QuarterbackGame[]): Quarterb
   const avgPassingAttemptsAmt = games.reduce((a, g) => a + g.passingAttemptsAmt, 0) / games.length;
   const avgPassingCompletionsAmt = games.reduce((a, g) => a + g.passingCompletionsAmt, 0) / games.length;
   const avgPassingCompletionPctg = avgPassingCompletionsAmt / avgPassingAttemptsAmt;
+  const avgPassingTouchdownsAmt = games.reduce((a, g) => a + g.passingTouchdownsAmt, 0) / games.length;
 
   const maxPassingAttemptsAmt = games.reduce((max, g) => Math.max(max, g.passingAttemptsAmt), games[0].passingAttemptsAmt);
   const maxPassingCompletionsAmt = games.reduce((max, g) => Math.max(max, g.passingCompletionsAmt), games[0].passingCompletionsAmt);
@@ -24,6 +25,7 @@ export function aggregateQuarterbackGameData(games: QuarterbackGame[]): Quarterb
     avgPassingAttemptsAmt,
     avgPassingCompletionsAmt,
     avgPassingCompletionPctg,
+    avgPassingTouchdownsAmt,
     maxPassingAttemptsAmt,
     maxPassingCompletionsAmt,
     maxPassingCompletionPctg,

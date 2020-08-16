@@ -5,7 +5,8 @@ export default gql`
     dashPlayerTypeahead(lastName: $lastName) {
       firstName,
       lastName,
-      playerAbbr
+      playerAbbr,
+      primaryPosition
     }
   }
 `;

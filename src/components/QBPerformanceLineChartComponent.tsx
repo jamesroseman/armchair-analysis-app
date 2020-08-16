@@ -3,11 +3,11 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts'
 import { QuarterbackGame } from '../types/QuarterbackDashboardTypes';
 import { transformQuarterbackGameData } from '../transformers/PlayerDashboardDataTransformers';
 
-type PlayerDashboardGamePerformanceLineChartProps = {
+type QBPerformanceLineChartComponentProps = {
   data: QuarterbackGame[]
 }
 
-export default ({ data }: PlayerDashboardGamePerformanceLineChartProps) => {
+export default ({ data }: QBPerformanceLineChartComponentProps) => {
   const dataThisSeason = data.filter((g: QuarterbackGame) => g.seasonYear === 2019);
   const transformedDataThisSeason = transformQuarterbackGameData(dataThisSeason);
 

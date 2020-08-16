@@ -7,8 +7,8 @@ import {
 } from 'react-router-dom';
 import styles from './App.module.css';
 
-import PlayerDashboardContainer from './containers/PlayerDashboardContainer';
 import PlayerSelectorContainer from './containers/PlayerSelectorContainer';
+import PlayerDashboardRenderer from './renderers/PlayerDashboardRenderer';
 
 function App() {
   return (
@@ -29,7 +29,7 @@ function App() {
 
 function PlayerDashboardContainerRoute() {
   let { playerAbbr } = useParams();
-  return (<PlayerDashboardContainer playerAbbr={playerAbbr} />);
+  return (<PlayerDashboardRenderer playerAbbr={playerAbbr} />);
 }
 
 export default App;

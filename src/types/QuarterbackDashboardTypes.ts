@@ -2,6 +2,7 @@ export type QuarterbackGame = {
   gameId: string,
   passingAttemptsAmt: number,
   passingCompletionsAmt: number,
+  passingTouchdownsAmt: number,
   seasonYear: number
 }
 
@@ -10,11 +11,13 @@ export type QuarterbackPerformanceLineChartDatapoint = {
   passingAttemptsAmt: number,
   passingCompletionsAmt: number,
   passingCompletionPctg: string,
+  passingTouchdownsAmt: number,
   seasonYear: number
 }
 
 export type QuarterbackDataAggregation = {
   gamesAmt: number,
+  avgPassingTouchdownsAmt: number,
   avgPassingAttemptsAmt: number,
   avgPassingCompletionsAmt: number,
   avgPassingCompletionPctg: number,
