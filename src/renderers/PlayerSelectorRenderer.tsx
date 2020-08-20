@@ -6,7 +6,8 @@ import GetPlayerAbbrFromNameQuery from '../queries/GetDashPlayerTypeaheadFromNam
 type DashboardPlayerTypeahead = {
   firstName: string,
   lastName: string,
-  playerAbbr: string
+  playerAbbr: string,
+  primaryPosition: string
 }
 
 type DashboardPlayerQueryResponse = {
@@ -28,7 +29,7 @@ const PlayerSelectorRenderer = ({ lastName }: PlayerSelectorRendererProps) => {
           {data.dashPlayerTypeahead.map((player) => (
             <li key={`li.${player.playerAbbr}`}>
             <Link target="_blank" key={player.playerAbbr} to={`/p/${player.playerAbbr}`}>
-                {player.lastName}, {player.firstName}
+                {player.lastName}, {player.firstName} ({player.primaryPosition})
               </Link>
             </li>
           ))}

@@ -14,6 +14,7 @@ export default gql`
         passingAttemptsAmt,
         passingCompletionsAmt,
         passingTouchdownsAmt,
+        passingYardageAmt,
         seasonYear
       }
     }

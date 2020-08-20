@@ -1,4 +1,4 @@
-import { QuarterbackGame } from "./QuarterbackDashboardTypes";
+import { QuarterbackGame } from "./QBDashboardTypes";
 
 export enum PlayerPosition {
   Quarterback = "QB",

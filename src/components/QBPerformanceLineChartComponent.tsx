@@ -1,6 +1,6 @@
 import React from 'react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
-import { QuarterbackGame } from '../types/QuarterbackDashboardTypes';
+import { QuarterbackGame } from '../types/QBDashboardTypes';
 import { transformQuarterbackGameData } from '../transformers/PlayerDashboardDataTransformers';
 
 type QBPerformanceLineChartComponentProps = {

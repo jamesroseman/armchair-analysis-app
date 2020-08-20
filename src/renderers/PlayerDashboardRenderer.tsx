@@ -1,8 +1,8 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import GetPlayerFromAbbrQuery from '../queries/GetPlayerForDashboardQuery';
-import { Player, PlayerPosition } from '../types/PlayerDashboardTypes';
-import QBDashboardContainer from '../containers/QBDashboardContainer';
+import { Player } from '../types/PlayerDashboardTypes';
+import PlayerDashboardContainer from '../containers/PlayerDashboardContainer';
 
 
 type DashboardPlayerQueryResponse = {
@@ -12,18 +12,14 @@ type DashboardPlayerQueryResponse = {
   }
 }
 
-type PlayerViewerProps = {
+type PlayerDashboardProps = {
   playerAbbr: string
 }
 
-export default ({ playerAbbr }: PlayerViewerProps) => (
+export default ({ playerAbbr }: PlayerDashboardProps) => (
   <Query query={GetPlayerFromAbbrQuery} variables={{ playerAbbr }}>
-    {({ loading, data }: DashboardPlayerQueryResponse) => !loading && renderDashboard(data.dashPlayer)}
+    {({ loading, data }: DashboardPlayerQueryResponse) => !loading && (
+      <PlayerDashboardContainer player={data.dashPlayer} />
+    )}
   </Query>
 )
-
-function renderDashboard(player: Player) {
-  if (player.demographicData.primaryPosition === PlayerPosition.Quarterback) {
-    return <QBDashboardContainer player={player} />
-  }
-}
