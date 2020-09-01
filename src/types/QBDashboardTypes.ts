@@ -4,7 +4,8 @@ export type QuarterbackGame = {
   passingCompletionsAmt: number,
   passingTouchdownsAmt: number,
   passingYardageAmt: number,
-  seasonYear: number
+  seasonYear: number,
+  fantasyPoints: number
 }
 
 export type QuarterbackPerformanceLineChartDatapoint = {
@@ -25,16 +26,22 @@ export type QuarterbackDataAggregation = {
   avgPassingCompletionsAmt: number,
   avgPassingCompletionPctg: number,
   avgPassingYardageAmt: number,
+  avgFantasyPoints: number,
+  avgFantasyPointsDev: number,
 
   maxPassingTouchdownsAmt: number,
   maxPassingAttemptsAmt: number,
   maxPassingCompletionsAmt: number,
   maxPassingCompletionPctg: number,
   maxPassingYardageAmt: number,
+  maxFantasyPoints: number,
+  maxFantasyPointsDev: number,
 
   minPassingTouchdownsAmt: number,
   minPassingAttemptsAmt: number,
   minPassingCompletionsAmt: number,
   minPassingCompletionPctg: number,
-  minPassingYardageAmt: number
+  minPassingYardageAmt: number,
+  minFantasyPoints: number,
+  minFantasyPointsDev: number
 }

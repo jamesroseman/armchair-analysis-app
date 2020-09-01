@@ -15,3 +15,9 @@ export type Player = {
   };
   playerGames: QuarterbackGame[];
 }
+
+export enum SeasonSelection {
+  One = "one_season",
+  Three = "three_season",
+  Lifetime = "lifetime"
+}

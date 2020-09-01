@@ -6,6 +6,8 @@ export function aggregateQuarterbackGameData(games: QuarterbackGame[]): Quarterb
   const avgPassingCompletionsAmt = games.reduce((a, g) => a + g.passingCompletionsAmt, 0) / games.length;
   const avgPassingCompletionPctg = avgPassingCompletionsAmt / avgPassingAttemptsAmt;
   const avgPassingYardageAmt = games.reduce((a, g) => a + g.passingYardageAmt, 0) / games.length;
+  const avgFantasyPoints = games.reduce((a, g) => a + g.fantasyPoints, 0) / games.length;
+  const avgFantasyPointsDev = games.reduce((a, g) => a + Math.abs(g.fantasyPoints - avgFantasyPoints), 0) / games.length;
 
   const maxPassingTouchdownsAmt = games.reduce((max, g) => Math.max(max, g.passingTouchdownsAmt), games[0].passingTouchdownsAmt);
   const maxPassingAttemptsAmt = games.reduce((max, g) => Math.max(max, g.passingAttemptsAmt), games[0].passingAttemptsAmt);
@@ -15,6 +17,8 @@ export function aggregateQuarterbackGameData(games: QuarterbackGame[]): Quarterb
     games[0].passingCompletionsAmt / games[0].passingAttemptsAmt,
   );
   const maxPassingYardageAmt = games.reduce((max, g) => Math.max(max, g.passingYardageAmt), games[0].passingCompletionsAmt);
+  const maxFantasyPoints = games.reduce((max, g) => Math.max(max, g.fantasyPoints), games[0].passingCompletionsAmt);
+  const maxFantasyPointsDev = games.reduce((max, g) => Math.max(max, Math.abs(g.fantasyPoints - avgFantasyPoints)), 0) / games.length;
 
   const minPassingTouchdownsAmt = games.reduce((min, g) => Math.min(min, g.passingTouchdownsAmt), games[0].passingTouchdownsAmt);
   const minPassingAttemptsAmt = games.reduce((min, g) => Math.min(min, g.passingAttemptsAmt), games[0].passingAttemptsAmt);
@@ -24,6 +28,8 @@ export function aggregateQuarterbackGameData(games: QuarterbackGame[]): Quarterb
     games[0].passingCompletionsAmt / games[0].passingAttemptsAmt,
   );
   const minPassingYardageAmt = games.reduce((min, g) => Math.min(min, g.passingYardageAmt), games[0].passingCompletionsAmt);
+  const minFantasyPoints = games.reduce((min, g) => Math.min(min, g.fantasyPoints), games[0].passingCompletionsAmt);
+  const minFantasyPointsDev = games.reduce((min, g) => Math.min(min, Math.abs(g.fantasyPoints - avgFantasyPoints)), 0) / games.length;
 
   return {
     gamesAmt: games.length,
@@ -33,18 +39,24 @@ export function aggregateQuarterbackGameData(games: QuarterbackGame[]): Quarterb
     avgPassingCompletionsAmt,
     avgPassingCompletionPctg,
     avgPassingYardageAmt,
+    avgFantasyPoints,
+    avgFantasyPointsDev,
     // Max values
     maxPassingTouchdownsAmt,
     maxPassingAttemptsAmt,
     maxPassingCompletionsAmt,
     maxPassingCompletionPctg,
     maxPassingYardageAmt,
+    maxFantasyPoints,
+    maxFantasyPointsDev,
     // Min values
     minPassingTouchdownsAmt,
     minPassingAttemptsAmt,
     minPassingCompletionsAmt,
     minPassingCompletionPctg,
     minPassingYardageAmt,
+    minFantasyPoints,
+    minFantasyPointsDev
   }
 }
 

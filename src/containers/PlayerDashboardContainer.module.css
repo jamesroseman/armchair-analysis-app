@@ -1,3 +1,17 @@
-.title {
+.header {
   text-align: center;
+  margin-bottom: 20px;
+}
+
+.header>h1 {
+  margin-bottom: 6px;
+}
+
+.generalStatsHeader {
+  padding-left: 35px;
+  cursor: pointer;
+  text-align: left;
+  text-transform: uppercase;
+  color: #999;
+  font-size: 20px;
 }

@@ -15,7 +15,8 @@ export default gql`
         passingCompletionsAmt,
         passingTouchdownsAmt,
         passingYardageAmt,
-        seasonYear
+        seasonYear,
+        fantasyPoints
       }
     }
   }

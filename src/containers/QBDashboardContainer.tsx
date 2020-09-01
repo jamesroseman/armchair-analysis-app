@@ -1,41 +1,23 @@
 import React from 'react';
 import { Player } from '../types/PlayerDashboardTypes';
-import { aggregateQuarterbackGameData, transformQuarterbackGameData } from '../transformers/PlayerDashboardDataTransformers';
+import { aggregateQuarterbackGameData } from '../transformers/PlayerDashboardDataTransformers';
 import GameStatsTableComponent from '../components/StatsTableComponent';
 import { QuarterbackGame, QuarterbackDataAggregation } from '../types/QBDashboardTypes';
-import PerformanceLineChartComponent from '../components/PerformanceLineChartComponent';
 
 type PlayerDashboardContainerProps = {
   player: Player
 }
 
 export default ({ player }: PlayerDashboardContainerProps) => {
-  const lineChartData = formatGamesForPerfLineChart(player);
   const headlineStatsTableData = formatGamesForHeadlineStatsTable(player);
   const allGamesTableData = formatGamesForAllGamesTable(player);
 
   return (
     <div>
-      <PerformanceLineChartComponent lines={lineChartData.lines} data={lineChartData.data} />
       <GameStatsTableComponent headers={headlineStatsTableData.headers} rows={headlineStatsTableData.rows} />
       <GameStatsTableComponent headers={allGamesTableData.headers} rows={allGamesTableData.rows} />
     </div>
   )
-}
-
-function formatGamesForPerfLineChart({ playerGames }: Player) {
-  const data = transformQuarterbackGameData(playerGames);
-  const lines = [
-    {
-      dataKey: "passingYardageAmt",
-      color: "green"
-    },
-    {
-      dataKey: "passingCompletionPctg",
-      color: "red"
-    }
-  ];
-  return { data, lines }
 }
 
 function formatGamesForAllGamesTable({ playerGames }: Player) {
@@ -45,7 +27,8 @@ function formatGamesForAllGamesTable({ playerGames }: Player) {
     "Touchdowns",
     "Attempts",
     "Completions",
-    "Percentage"
+    "Percentage",
+    "Fantasy"
   ];
   const rows = playerGames.map((game: QuarterbackGame) => [
     game.gameId,
@@ -53,7 +36,8 @@ function formatGamesForAllGamesTable({ playerGames }: Player) {
     game.passingTouchdownsAmt,
     game.passingAttemptsAmt,
     game.passingCompletionsAmt,
-    `${(100 * game.passingCompletionsAmt / game.passingAttemptsAmt).toFixed(2)}%`
+    `${(100 * game.passingCompletionsAmt / game.passingAttemptsAmt).toFixed(2)}%`,
+    game.fantasyPoints
   ]);
   return { headers, rows };
 }
@@ -67,7 +51,9 @@ function formatGamesForHeadlineStatsTable({ playerGames }: Player) {
     "Attempts",
     "Yardage",
     "Completions",
-    "Percentage"
+    "Percentage",
+    "Fantasy",
+    "Deviation"
   ];
   const rows = [
     [
@@ -77,7 +63,9 @@ function formatGamesForHeadlineStatsTable({ playerGames }: Player) {
       agg.avgPassingAttemptsAmt.toFixed(3),
       agg.avgPassingYardageAmt.toFixed(3),
       agg.avgPassingCompletionsAmt.toFixed(3),
-      `${(100 * agg.avgPassingCompletionPctg).toFixed(1)}%`
+      `${(100 * agg.avgPassingCompletionPctg).toFixed(1)}%`,
+      agg.avgFantasyPoints.toFixed(1),
+      agg.avgFantasyPointsDev.toFixed(1)
     ],
     [
       "Max",
@@ -86,7 +74,9 @@ function formatGamesForHeadlineStatsTable({ playerGames }: Player) {
       agg.maxPassingAttemptsAmt,
       agg.maxPassingYardageAmt,
       agg.maxPassingCompletionsAmt,
-      `${(100 * agg.maxPassingCompletionPctg).toFixed(1)}%`
+      `${(100 * agg.maxPassingCompletionPctg).toFixed(1)}%`,
+      agg.maxFantasyPoints,
+      agg.maxFantasyPointsDev
     ],
     [
       "Min",
@@ -95,7 +85,9 @@ function formatGamesForHeadlineStatsTable({ playerGames }: Player) {
       agg.minPassingAttemptsAmt,
       agg.minPassingYardageAmt,
       agg.minPassingCompletionsAmt,
-      `${(100 * agg.minPassingCompletionPctg).toFixed(1)}%`
+      `${(100 * agg.minPassingCompletionPctg).toFixed(1)}%`,
+      agg.minFantasyPoints,
+      agg.minFantasyPointsDev
     ]
   ];
   return { headers, rows };
