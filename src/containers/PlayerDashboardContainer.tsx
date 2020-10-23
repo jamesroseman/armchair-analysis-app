@@ -40,8 +40,10 @@ export default ({ player }: PlayerDashboardProps) => {
         <h1>{firstName} {lastName} {primaryPosition} Dashboard</h1>
         <SeasonSelector onStateChange={onStateChange} />
       </div>
-      <div onClick={() => setIsStatsOpen(!isStatsOpen)}>
-        <div className={styles.generalStatsHeader}>General Stats</div>
+      <div>
+        <div className={styles.generalStatsHeader} onClick={() => setIsStatsOpen(!isStatsOpen)}>
+          General Stats
+        </div>
         <hr />
         <Collapse isOpen={isStatsOpen}>
           <PerformanceLineChartComponent data={formatGamesForPerfLineChart(playerState).data} lines={formatGamesForPerfLineChart(playerState).lines} />

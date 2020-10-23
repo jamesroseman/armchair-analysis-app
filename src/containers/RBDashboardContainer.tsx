@@ -25,12 +25,16 @@ function formatGamesForHeadlineStatsTable({ playerGames }: Player) {
   const minFantasyScored = playerGames.reduce((a, g) => g.fantasyPoints < a ? g.fantasyPoints : a, Number.MAX_SAFE_INTEGER);
   const maxFantasyScored = playerGames.reduce((a, g) => g.fantasyPoints > a ? g.fantasyPoints : a, 0);
 
+  const deviations = playerGames.map((g) => Math.abs(avgFantasyPoints - g.fantasyPoints));
+  const avgDeviationPerGame = deviations.reduce((a, deviation) => a + deviation, 0) / playerGames.length;
+
   const headers = [
     "Games",
     "Avg. Fantasy",
     "(+) Deviation",
     "(-) Deviation",
-    "% Below Avg",
+    "Consistency",
+    "Avg. Deviation",
     "Min",
     "Max"
   ];
@@ -40,7 +44,8 @@ function formatGamesForHeadlineStatsTable({ playerGames }: Player) {
       avgFantasyPoints.toFixed(2),
       positiveFantasyDeviationsCt,
       negativeFantasyDeviationsCt,
-      (negativeFantasyDeviationsCt / playerGames.length * 100).toFixed(2),
+      Math.abs((0.5 - (negativeFantasyDeviationsCt / playerGames.length)) * 100).toFixed(2),
+      avgDeviationPerGame.toFixed(3),
       minFantasyScored,
       maxFantasyScored
     ],
