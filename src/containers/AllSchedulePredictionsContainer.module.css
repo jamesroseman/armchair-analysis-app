@@ -1,0 +1,14 @@
+.table {
+  padding: 15px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.weekNumberHeader {
+  text-align: center;
+  text-transform: uppercase;
+  border-bottom: 1px dotted black;
+  font-size: 20px;
+  margin-top: 15px;
+}

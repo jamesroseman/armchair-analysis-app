@@ -7,8 +7,7 @@ import {
 } from 'react-router-dom';
 import styles from './App.module.css';
 
-import PlayerSelectorContainer from './containers/PlayerSelectorContainer';
-import PlayerDashboardRenderer from './renderers/PlayerDashboardRenderer';
+import AllSchedulePredictionsRenderer from './renderers/AllSchedulePredictionsRenderer';
 
 function App() {
   return (
@@ -16,10 +15,10 @@ function App() {
       <Router>
         <Switch>
           <Route exact path='/'>
-            <PlayerSelectorContainer />
+            <AllSchedulePredictionsRenderer />
           </Route>
-          <Route path='/p/:playerAbbr'>
-            <PlayerDashboardContainerRoute />
+          <Route path='/sp/:schedulePredictionId'>
+            <SchedulePredictionDashboardContainerRoute />
           </Route>
         </Switch>
       </Router>
@@ -27,9 +26,9 @@ function App() {
   );
 }
 
-function PlayerDashboardContainerRoute() {
-  let { playerAbbr } = useParams();
-  return (<PlayerDashboardRenderer playerAbbr={playerAbbr} />);
+function SchedulePredictionDashboardContainerRoute() {
+  let { schedulePredictionId } = useParams();
+  return (<div>{schedulePredictionId}</div>);
 }
 
 export default App;
