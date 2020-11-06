@@ -1,3 +1,47 @@
+export enum Day {
+  Sunday = 'SUN',
+  Monday = 'MN',
+  Tuesday = "TUE",
+  Thursday = 'THU',
+  Saturday = 'SN'
+}
+
+export enum Conditions {
+  Cold = 'Cold',
+  ClosedRoof = 'Closed Roof',
+  Dome = 'Dome',
+  Flurries = 'Flurries',
+  LightSnow = 'Light Snow',
+  Snow = 'Snow',
+  ChanceRain = 'Chance Rain',
+  LightRain = 'Light Rain',
+  Rain = 'Rain',
+  MostlyCloudy = 'Mostly Cloudy',
+  PartlyCloudy = 'Partly Cloudy',
+  Cloudy = 'Cloudy',
+  MostlySunny = 'Mostly Sunny',
+  PartlySunny = 'Partly Sunny',
+  Sunny = 'Sunny',
+  Hazy = 'Hazy',
+  Foggy = 'Foggy',
+  Clear = 'Clear',
+  Fair = 'Fair'
+}
+
+export enum Surface {
+  Grass = 'Grass',
+  AstroTurf = 'AstroTurf',
+  AstroPlay = 'AstroPlay',
+  FieldTurf = 'FieldTurf',
+  SportGrass = 'SportGrass',
+  NeXTurf = 'NeXTurf',
+  MomentumTurf = 'MomentumTurf',
+  DDGrassMaster = 'DD GrassMaster',
+  Sportex = 'Sportex',
+  ATurfTitan = 'A Turf Titan',
+  UBUSpeedSeriesS5M = 'UBU Speed Series S5M'
+}
+
 export enum TeamName {
   ArizonaCardinals = 'ARI',
   AtlantaFalcons = 'ATL',

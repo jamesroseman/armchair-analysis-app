@@ -1,16 +1,20 @@
-import { TeamName } from "./ModelConstantTypes";
+import { Game } from "./GameTypes";
+import { TeamName, Day } from "./ModelConstantTypes";
 
 export type SchedulePrediction = {
   scheduleId: string,
   gameId: string,
-  weekNumber: number,
+  game?: Game,
   seasonYear: number,
-  homeTeamName: TeamName,
-  homeTeamEloRating: number,
-  homeTeamEloRatingRank: number,
-  homeTeamEloWinExp: number,
+  weekNumber: number,
+  dayOfWeek: Day,
+  date: string,
   visitingTeamName: TeamName,
   visitingTeamEloRating: number,
   visitingTeamEloRatingRank: number,
   visitingTeamEloWinExp: number,
+  homeTeamName: TeamName,
+  homeTeamEloRating: number,
+  homeTeamEloRatingRank: number,
+  homeTeamEloWinExp: number,
 }

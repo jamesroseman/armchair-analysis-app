@@ -1,0 +1,96 @@
+.game-body {
+  background: #fff;
+
+  border: 7px solid #fff;
+  outline: 1px solid #f0f0f0;
+  box-shadow: 1px 1px 5px rgba(0,0,0,.2);
+  border-radius: 4px;
+  width: 350px;
+
+  cursor: pointer;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+}
+
+.td {
+  text-align: center;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.th {
+  font-size: 11px;
+  padding-left: 5px;
+  padding-bottom: 5px;
+  font-weight: 500;
+  color: #888;
+  letter-spacing: -0.15px;
+}
+
+.tr:first-child {
+  border-bottom: 2px solid #fff;
+}
+
+.logo {
+  width: 37px;
+  text-align: left;
+}
+
+.team {
+  text-align: left;
+  line-height: 1;
+  letter-spacing: -0.3px;
+  font-weight: 500;
+
+  vertical-align: middle;
+  width: 180px;
+
+  font-size: 15px;
+}
+
+.win-exp {
+  line-height: 1;
+  letter-spacing: -0.8px;
+
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 575;
+  font-size: 15px;
+
+  width: 50px;
+  background-color: rgb(182, 197, 233);
+}
+
+.score {
+  margin-left: 1px;
+  line-height: 1;
+  letter-spacing: -0.8px;
+  border-left: 2px solid #fff;
+
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 500;
+  font-size: 15px;
+
+  width: 50px;
+}
+
+.score.occurred {
+  background-color: #fff;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.score.scheduled {
+  background-color: rgb(228, 228, 228);
+}
+
+.score.winner:before {
+  content: '✓';
+  margin-right: 5px;
+  font-size: 14px;
+  color: #999;
+}

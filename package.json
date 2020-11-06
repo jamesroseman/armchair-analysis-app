@@ -26,7 +26,6 @@
     "react-relay": "^10.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
-    "reactstrap": "6.4.0",
     "recharts": "^1.8.5",
     "relay-runtime": "^10.0.1",
     "trendline": "^0.3.1",

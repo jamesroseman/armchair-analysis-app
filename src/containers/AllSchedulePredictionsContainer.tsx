@@ -1,85 +1,97 @@
 import React from 'react';
-import TeamLogoImageComponent from '../components/TeamLogoImageComponent';
+import TeamMatchupBoxComponent from '../components/TeamMatchupBoxComponent';
+import { Day } from '../types/ModelConstantTypes';
 import { SchedulePrediction } from '../types/SchedulePredictionTypes';
+import { TimeUtils } from '../utils/TimeUtils';
 import styles from './AllSchedulePredictionsContainer.module.css';
 
 type AllSchedulePredictionsProps = {
   schedulePredictions: SchedulePrediction[],
 }
 
-type WeekNumberToSchedulePredictions = {
+type DateToSchedulePredictionsMap = {
+  [date: string]: SchedulePrediction[]
+}
+
+type WeekNumberToSchedulePredictionsMap = {
   [weekNumber: string]: SchedulePrediction[]
 }
 
 export default ({ schedulePredictions }: AllSchedulePredictionsProps) => {
-  const weekNumberToSchedulePredictions: WeekNumberToSchedulePredictions = schedulePredictions.reduce(
-    (agg: WeekNumberToSchedulePredictions, sp: SchedulePrediction) => {
-      if (!agg.hasOwnProperty(sp.weekNumber)) {
-        agg[sp.weekNumber] = [];
-      }
-      agg[sp.weekNumber] = [...agg[sp.weekNumber], sp];
-      return agg;
-    },
-    {}
-  );
-  const reversedWeekNumbers: string[] = Object.keys(weekNumberToSchedulePredictions).reverse();
+  const weekNumberToSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap = getWeekNumberToSchedulePredictionsMap(schedulePredictions);
+  const weekNumbers: string[] = Object.keys(weekNumberToSchedulePredictionsMap).reverse();
+
   return (
     <div>
-      {renderTables(reversedWeekNumbers, weekNumberToSchedulePredictions)}
+      {renderMatchupsForWeeks(weekNumbers, weekNumberToSchedulePredictionsMap)}
     </div>
   );
 }
 
-function renderTables(reversedWeekNumbers: string[], weekNumberToSchedulePredictions: WeekNumberToSchedulePredictions): JSX.Element[] {
-  return reversedWeekNumbers.map((weekNumber: string) => {
+function renderMatchupsForWeeks(weekNumbers: string[], weekNumberToSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap): JSX.Element[] {
+  return weekNumbers.map((weekNumber: string) => {
+    const schedulePredictions: SchedulePrediction[] = weekNumberToSchedulePredictionsMap[weekNumber];
+    const dateToSchedulePredictionsMap: DateToSchedulePredictionsMap = getDateToSchedulePredictionsMap(schedulePredictions);
+    const dates: string[] = Object.keys(dateToSchedulePredictionsMap);
     return (
-      <div>
-        {renderWeekNumberHeader(weekNumber)}
-        <table className={styles.table}>
-          {weekNumberToSchedulePredictions[weekNumber].map(renderSchedulePredictionRow)}
-        </table>
+      <div key={`matchups-for-weeks-${Math.random()}`}>
+        <div className={styles['week-number']}>Week {weekNumber}</div>
+        {renderMatchupsForWeek(dates, dateToSchedulePredictionsMap)}
       </div>
     );
   });
 }
 
-function renderWeekNumberHeader(weekNumber: string): JSX.Element {
-  return <div className={styles.weekNumberHeader}>Week {weekNumber}</div>;
+function renderMatchupsForWeek(dates: string[], dateToSchedulePredictionsMap: DateToSchedulePredictionsMap): JSX.Element[] {
+  return dates.map((date: string) => {
+    const dayOfWeek: Day = dateToSchedulePredictionsMap[date][0].dayOfWeek;
+    const printableDate: string = TimeUtils.getPrintableDateFromDateAndDayOfWeek(date, dayOfWeek);
+    return (
+      <div key={date}>
+        <div className={styles['date']}>{printableDate}</div>
+        <div className={styles['week-matchups']}>
+          {dateToSchedulePredictionsMap[date].map(renderSchedulePredictionRow)}
+        </div>
+      </div>
+    );
+  });
 }
 
 function renderSchedulePredictionRow(schedulePrediction: SchedulePrediction): JSX.Element {
-  const {
-    visitingTeamName,
-    visitingTeamEloRatingRank,
-    visitingTeamEloWinExp,
-    homeTeamName,
-    homeTeamEloRatingRank,
-  } = schedulePrediction;
   return(
-    <tr>
-      <td>
-        <TeamLogoImageComponent width={25} teamName={visitingTeamName} />
-      </td>
-      <td>
-        #{visitingTeamEloRatingRank}
-      </td>
-      <td>
-        {visitingTeamName}
-      </td>
-      <td>
-      <td>
-        {(visitingTeamEloWinExp * 100).toFixed(1)}%
-      </td>
-      </td>
-      <td>
-        #{homeTeamEloRatingRank}
-      </td>
-      <td>
-        {homeTeamName}
-      </td>
-      <td>
-      <TeamLogoImageComponent width={25} teamName={homeTeamName} />
-      </td>
-    </tr>
+    <div key={`matchupbox-${schedulePrediction.scheduleId}`} className={styles['matchup-box']}>
+      <TeamMatchupBoxComponent schedulePrediction={schedulePrediction} />
+    </div>
+  );
+}
+
+function getWeekNumberToSchedulePredictionsMap(schedulePredictions: SchedulePrediction[]): WeekNumberToSchedulePredictionsMap {
+  return schedulePredictions.reduce(
+    (agg: WeekNumberToSchedulePredictionsMap, sp: SchedulePrediction) => {
+      if (!agg.hasOwnProperty(sp.weekNumber)) {
+        agg[sp.weekNumber] = [];
+      }
+      return {
+        ...agg,
+        [sp.weekNumber]: [ ...agg[sp.weekNumber], sp ],
+      }
+    },
+    {}
+  );
+}
+
+function getDateToSchedulePredictionsMap(schedulePredictions: SchedulePrediction[]): DateToSchedulePredictionsMap {
+  return schedulePredictions.reduce(
+    (agg: DateToSchedulePredictionsMap, sp: SchedulePrediction) => {
+      const trimmedDate: string = sp.date.split(' ')[0];
+      if (!agg.hasOwnProperty(trimmedDate)) {
+        agg[trimmedDate] = [];
+      }
+      return {
+        ...agg,
+        [trimmedDate]: [ ...agg[trimmedDate], sp ],
+      }
+    },
+    {}
   );
 }
