@@ -18,3 +18,15 @@ export type SchedulePrediction = {
   homeTeamEloRatingRank: number,
   homeTeamEloWinExp: number,
 }
+
+export type SchedulePredictionsAccuracy = {
+  predictionsAmt: number,
+  correctPredictionsAmt: number,
+  predictionsGuessRate: number,
+  confidentPredictionsAmt: number,
+  correctConfidentPredictionsAmt: number,
+  confidentPredictionsGuessRate: number,
+  againstTheSpreadPredictionsAmt: number,
+  correctAgainstTheSpreadPredictionsAmt: number,
+  againstTheSpreadPredictionsGuessRate: number
+}

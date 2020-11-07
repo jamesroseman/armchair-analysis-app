@@ -17,6 +17,18 @@
                                 supported by Chrome, Edge, Opera and Firefox */
 }
 
+.highlight {
+  outline: 1px solid rgb(221, 167, 123);
+}
+
+.highlight.correct {
+  outline: 1px solid rgb(8,188,188);
+}
+
+.highlight.incorrect {
+  outline: 1px solid rgb(244, 97, 151);
+}
+
 .td {
   text-align: center;
   align-items: center;
@@ -25,8 +37,8 @@
 
 .th {
   font-size: 11px;
-  padding-left: 5px;
-  padding-bottom: 5px;
+  padding-left: 7px;
+  padding-bottom: 3px;
   font-weight: 500;
   color: #888;
   letter-spacing: -0.15px;
@@ -53,6 +65,21 @@
   font-size: 15px;
 }
 
+.point-spread {
+  margin-left: 1px;
+  padding-right: 4px;
+  line-height: 1;
+  letter-spacing: -0.8px;
+  border-left: 2px solid #fff;
+
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600;
+  font-size: 15px;
+  color: #666;
+
+  width: 50px;
+}
+
 .win-exp {
   line-height: 1;
   letter-spacing: -0.8px;
@@ -72,7 +99,7 @@
   border-left: 2px solid #fff;
 
   font-family: 'Courier New', Courier, monospace;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 15px;
 
   width: 50px;
@@ -85,7 +112,7 @@
 }
 
 .score.scheduled {
-  background-color: rgb(228, 228, 228);
+  background-color: #eee;
 }
 
 .score.winner:before {

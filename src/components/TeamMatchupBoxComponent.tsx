@@ -1,20 +1,45 @@
 import React from 'react';
 import { TeamName } from '../types/ModelConstantTypes';
 import { SchedulePrediction } from '../types/SchedulePredictionTypes';
+import { SchedulePredictionUtils } from '../utils/SchedulePredictionUtils';
 import { TeamNameUtils } from '../utils/TeamNameUtils';
 import { TimeUtils } from '../utils/TimeUtils';
 import TeamLogoImageComponent from './TeamLogoImageComponent';
 import styles from './TeamMatchupBoxComponent.module.css';
 
 type TeamMatchupBoxComponentProps = {
-  schedulePrediction: SchedulePrediction
+  schedulePrediction: SchedulePrediction,
+  shouldHighlight?: boolean,
+  isCorrect?: boolean
 }
 
-export default ({ schedulePrediction }: TeamMatchupBoxComponentProps) => {
+export default ({ schedulePrediction, shouldHighlight, isCorrect }: TeamMatchupBoxComponentProps) => {
   const { visitingTeamName, visitingTeamEloWinExp, homeTeamName, homeTeamEloWinExp, game } = schedulePrediction;
-  const isScheduled: boolean = game === null;
+  const isScheduled: boolean = !SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
   const didVisitorWin: boolean = game ? (game.pointsScoredVisitorAmt > game.pointsScoredHomeAmt) : false;
   const didHomeWin: boolean = game ? (game.pointsScoredHomeAmt > game.pointsScoredVisitorAmt) : false;
+
+  // Only display the point spread for the favored team (the team with a negative point spread).
+  let visitorPointSpreadNo: number | undefined = undefined;
+  let homePointSpreadNo: number | undefined = undefined;
+  if (game !== null && typeof(game) !== "undefined") {
+    visitorPointSpreadNo = game.visitorPointSpreadNo < 0
+    ? game.visitorPointSpreadNo
+    : undefined;
+    homePointSpreadNo = game.visitorPointSpreadNo > 0
+    ? game.visitorPointSpreadNo * -1
+    : undefined;
+  }
+
+  let cardClassNames: string = styles['game-body'];
+  if (isCorrect) {
+    cardClassNames += ` ${styles['correct']}`;
+  } else if (isCorrect !== null) {
+    cardClassNames += ` ${styles['incorrect']}`;
+  }
+  if (shouldHighlight) {
+    cardClassNames += ` ${styles['highlight']}`;
+  }
 
   return (
     <div key={`teamMatchupBox-${schedulePrediction.scheduleId}`}>
@@ -23,10 +48,10 @@ export default ({ schedulePrediction }: TeamMatchupBoxComponentProps) => {
           {renderTableHeader(isScheduled, schedulePrediction)}
         </thead>
       </table>
-      <table key={`teamMatchupBox-table-contents-${schedulePrediction.scheduleId}`} className={styles['game-body']}>
+      <table key={`teamMatchupBox-table-contents-${schedulePrediction.scheduleId}`} className={cardClassNames}>
         <tbody>
-          {renderTableRowForTeam(visitingTeamName, visitingTeamEloWinExp, isScheduled, didVisitorWin, game?.pointsScoredVisitorAmt )}
-          {renderTableRowForTeam(homeTeamName, homeTeamEloWinExp, isScheduled, didHomeWin, game?.pointsScoredHomeAmt )}
+          {renderTableRowForTeam(visitingTeamName, visitingTeamEloWinExp, isScheduled, didVisitorWin, visitorPointSpreadNo, game?.pointsScoredVisitorAmt )}
+          {renderTableRowForTeam(homeTeamName, homeTeamEloWinExp, isScheduled, didHomeWin, homePointSpreadNo, game?.pointsScoredHomeAmt )}
         </tbody>
       </table>
     </div>
@@ -53,6 +78,7 @@ function renderTableRowForTeam(
   winExp: number,
   isScheduled: boolean,
   didWin: boolean,
+  pointSpread?: number,
   pointsScored?: number
 ): JSX.Element {
   const winExpStr: string = `${(winExp * 100).toFixed(1)}%`;
@@ -63,6 +89,9 @@ function renderTableRowForTeam(
       </td>
       <td className={`${styles['td']} ${styles['team']}`}>
         {TeamNameUtils.getPrintableNameFromTeamName(teamName)}
+      </td>
+      <td className={`${styles['td']} ${styles['point-spread']}`}>
+        {pointSpread ?? ""}
       </td>
       <td className={`${styles['td']} ${styles['win-exp']}`}>
         {winExpStr}

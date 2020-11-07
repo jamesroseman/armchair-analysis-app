@@ -1,0 +1,72 @@
+.results-card {
+  display: flex;
+  flex-direction: column;
+
+  padding: 5px 5px 0px 5px;
+
+  background: #fff;
+  border: 7px solid #fff;
+  outline: 1px solid #f0f0f0;
+  box-shadow: 1px 1px 5px rgba(0,0,0,.2);
+  border-radius: 4px;
+}
+
+.th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 500;
+  color: #888;
+  letter-spacing: -0.15px;
+
+  width: 50px;
+}
+
+.tr {
+  border-bottom: 2px solid #fff;
+}
+
+.td {
+  border-right: 2px solid #fff;
+
+  text-align: left;
+  line-height: 1;
+  letter-spacing: -0.3px;
+  font-weight: 500;
+  vertical-align: middle;
+
+  width: 200px;
+  height: 30px;
+
+  font-size: 15px;
+}
+
+.title {
+  font-weight: 600;
+  vertical-align: bottom;
+  width: 150px;
+}
+
+.data {
+  text-align: center;
+  line-height: 1;
+  letter-spacing: -0.8px;
+
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 575;
+  font-size: 15px;
+
+  width: 50px;
+  background-color: #eee;
+}
+
+.confidence-limit {
+  background-color: rgb(204, 226, 221);
+}
+
+.confidence-limit-slider {
+  margin-top: 15px;
+}
+
+.confidence-limit-slider>input {
+  width: 100%;
+}

@@ -15,7 +15,8 @@ export const GetSchedulePredictionsQuery = gql`
       gameId,
       game {
         pointsScoredHomeAmt,
-        pointsScoredVisitorAmt
+        pointsScoredVisitorAmt,
+        visitorPointSpreadNo
       },
       weekNumber,
       seasonYear,

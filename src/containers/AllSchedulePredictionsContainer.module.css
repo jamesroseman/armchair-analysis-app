@@ -1,7 +1,13 @@
+.predictions-results {
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
 .week-matchups {
   display: flex;
-  flex-direction: column;
-  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: left;
   margin-left: auto;
   margin-right: auto;
 }
@@ -10,7 +16,7 @@
   text-align: left;
   font-weight: 800;
   font-size: 35px;
-  margin-top: 35px;
+  padding-top: 35px;
   padding-bottom: 3px;
 }
 
@@ -27,4 +33,34 @@
 
 .matchup-box {
   margin-bottom: 15px;
+  margin-right: 18px;
+}
+
+.header {
+  display: inline-flex;
+  font-size: 55px;
+ 
+  text-align: left;
+  letter-spacing: -0.45px;
+  font-weight: 900;
+}
+
+.completed-header {
+  margin-top: 150px;
+  margin-bottom: 30px;
+  padding-bottom: 7px;
+  border-bottom: 1px dotted #000;
+}
+
+.confident-predictions-toggle {
+  display: flex;
+  flex-direction: row;
+}
+
+.confident-predictions-toggle-title {
+  margin-right: 5px;
+}
+
+.confident-predictions-toggle-checkbox {
+
 }
