@@ -10,10 +10,11 @@ import styles from './TeamMatchupBoxComponent.module.css';
 type TeamMatchupBoxComponentProps = {
   schedulePrediction: SchedulePrediction,
   shouldHighlight?: boolean,
-  isCorrect?: boolean
+  isCorrect?: boolean,
+  hasOccurred?: boolean
 }
 
-export default ({ schedulePrediction, shouldHighlight, isCorrect }: TeamMatchupBoxComponentProps) => {
+export default ({ schedulePrediction, shouldHighlight, isCorrect, hasOccurred }: TeamMatchupBoxComponentProps) => {
   const { visitingTeamName, visitingTeamEloWinExp, homeTeamName, homeTeamEloWinExp, game } = schedulePrediction;
   const isScheduled: boolean = !SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
   const didVisitorWin: boolean = game ? (game.pointsScoredVisitorAmt > game.pointsScoredHomeAmt) : false;
@@ -32,9 +33,9 @@ export default ({ schedulePrediction, shouldHighlight, isCorrect }: TeamMatchupB
   }
 
   let cardClassNames: string = styles['game-body'];
-  if (isCorrect) {
+  if (isCorrect && hasOccurred) {
     cardClassNames += ` ${styles['correct']}`;
-  } else if (isCorrect !== null) {
+  } else if (isCorrect !== null && hasOccurred) {
     cardClassNames += ` ${styles['incorrect']}`;
   }
   if (shouldHighlight) {

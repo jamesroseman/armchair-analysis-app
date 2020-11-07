@@ -11,7 +11,11 @@ export class TimeUtils {
     const rawHour: number = parseInt(rawTime.split(":")[0]);
     const hour: number = rawHour <= 12 ? rawHour : rawHour - 12;
     const rawMinute: number = parseInt(rawTime.split(":")[1]);
-    const minute: string = rawMinute > 0 ? `:${rawMinute}` : "";
+    const minute: string = rawMinute > 0 && rawMinute > 10 
+    ? `:${rawMinute}` 
+    : rawMinute > 0
+    ? `:0${rawMinute}`
+    :"";
     const amPm: string = rawHour < 12 ? "a.m." : "p.m.";
     return `${hour}${minute}${amPm} Eastern`;
   }

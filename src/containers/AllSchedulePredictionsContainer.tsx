@@ -11,7 +11,7 @@ type AllSchedulePredictionsProps = {
   schedulePredictions: SchedulePrediction[],
 }
 
-const DEFAULT_CONFIDENCE_LIMIT: number = 53.9;
+const DEFAULT_CONFIDENCE_LIMIT: number = 59.3;
 
 export default ({ schedulePredictions }: AllSchedulePredictionsProps) => {
   if (schedulePredictions.length === 0) { 
@@ -109,10 +109,16 @@ function renderMatchupsForWeek(
 function renderSchedulePredictionRow(schedulePrediction: SchedulePrediction, confidenceLimit: number): JSX.Element {
   const shouldHighlight: boolean = SchedulePredictionUtils.isPredictionConfident(schedulePrediction, confidenceLimit / 100);
   const hasOccurred: boolean = SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
-  const isCorrect: boolean | undefined = hasOccurred ? SchedulePredictionUtils.isPredictionCorrect(schedulePrediction) : undefined;
+  const isCorrect: boolean = SchedulePredictionUtils.isPredictionCorrect(schedulePrediction);
+
   return(
     <div key={`matchupbox-${schedulePrediction.scheduleId}`} className={styles['matchup-box']}>
-      <TeamMatchupBoxComponent schedulePrediction={schedulePrediction} shouldHighlight={shouldHighlight} isCorrect={isCorrect} />
+      <TeamMatchupBoxComponent 
+        schedulePrediction={schedulePrediction} 
+        shouldHighlight={shouldHighlight} 
+        isCorrect={isCorrect} 
+        hasOccurred={hasOccurred}
+      />
     </div>
   );
 }
