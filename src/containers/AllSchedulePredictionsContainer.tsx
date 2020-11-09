@@ -15,7 +15,7 @@ type AllSchedulePredictionsContainerProps = {
 }
 
 const DEFAULT_CONFIDENCE_LIMIT: number = 59.3;
-const DEFAULT_STAKE: number = 1;
+const DEFAULT_STAKE: number = 3;
 
 export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) => {
   if (schedulePredictions.length === 0) { 

@@ -16,7 +16,17 @@ export default({ simulation, setStake, handleStakeSliderEvent }: BettingSimulati
     bets
   } = simulation;
 
+  const prettyPrintNumber: (num: number, digits?: number) => string = (num: number, digits: number = 2) => {
+    return num.toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });
+  };
+
   const profitMargin: number = 100 * (profit / stake);
+  const payoutStr: string = payout < 0
+  ? `-€${prettyPrintNumber(-payout)}`
+  : `€${prettyPrintNumber(payout)}`;
+  const profitStr: string = profit < 0
+  ? `-€${prettyPrintNumber(-profit)}`
+  : `€${prettyPrintNumber(profit)}`;
 
   return (
     <div>
@@ -36,11 +46,11 @@ export default({ simulation, setStake, handleStakeSliderEvent }: BettingSimulati
             <tbody>
               <tr className={styles['tr']}>
                 <td className={`${styles['td']} ${styles['data']}`}>{bets.length}</td>
-                <td className={`${styles['td']} ${styles['data']}`}>€{stake.toFixed(2)}</td>
-                <td className={`${styles['td']} ${styles['data']}`}>€{payout.toFixed(2)}</td>
-                <td className={`${styles['td']} ${styles['data']}`}>€{profit.toFixed(2)}</td>
-                <td className={`${styles['td']} ${styles['data']}`}>{profitMargin.toFixed(2)}%</td>
-                <td className={`${styles['td']} ${styles['data']} ${styles['stake']}`}>{setStake}</td>
+                <td className={`${styles['td']} ${styles['data']}`}>€{prettyPrintNumber(stake)}</td>
+                <td className={`${styles['td']} ${styles['data']}`}>{payoutStr}</td>
+                <td className={`${styles['td']} ${styles['data']}`}>{profitStr}</td>
+                <td className={`${styles['td']} ${styles['data']}`}>{prettyPrintNumber(profitMargin)}%</td>
+                <td className={`${styles['td']} ${styles['data']} ${styles['stake']}`}>{prettyPrintNumber(setStake, 0)}</td>
               </tr>
             </tbody>
           </table>
