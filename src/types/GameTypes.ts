@@ -1,5 +1,4 @@
-import { Surface } from "recharts";
-import { Conditions, Day, TeamName } from "./ModelConstantTypes";
+import { Conditions, Day, TeamName, Surface } from "./ModelConstantTypes";
 
 export type Game = {
   gameId: string,

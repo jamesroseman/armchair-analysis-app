@@ -2,13 +2,13 @@ import React from "react";
 import { SchedulePredictionsAccuracy } from "../types/SchedulePredictionTypes"
 import styles from "./PredictionAccuracyResultsComponent.module.css";
 
-type PredictionAccuracyResultsProps = {
+type PredictionAccuracyResultsComponentProps = {
   accuracy: SchedulePredictionsAccuracy,
   confidenceLimit: number,
   handleConfidenceLimitSliderEvent: (event: React.ChangeEvent) => void,
 }
 
-export default ({ accuracy, confidenceLimit, handleConfidenceLimitSliderEvent }: PredictionAccuracyResultsProps) => {
+export default ({ accuracy, confidenceLimit, handleConfidenceLimitSliderEvent }: PredictionAccuracyResultsComponentProps) => {
   const { 
     predictionsAmt,
     confidentPredictionsAmt,

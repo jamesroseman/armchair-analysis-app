@@ -20,7 +20,8 @@ export default ({ schedulePrediction, cardClassName }: TeamMatchupBoxComponentPr
     homeTeamName,
     homeTeamEloRatingRank,
     homeTeamEloWinExp,
-    game 
+    game,
+    bettingOdds
   } = schedulePrediction;
   const isScheduled: boolean = !SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
   const didVisitorWin: boolean = game ? (game.pointsScoredVisitorAmt > game.pointsScoredHomeAmt) : false;
@@ -57,7 +58,8 @@ export default ({ schedulePrediction, cardClassName }: TeamMatchupBoxComponentPr
             isScheduled,
             didVisitorWin,
             visitorPointSpreadNo,
-            game?.pointsScoredVisitorAmt 
+            game?.pointsScoredVisitorAmt,
+            bettingOdds?.visitingMoneylineOdds
           )}
           {renderTableRowForTeam(
             homeTeamName,
@@ -66,7 +68,8 @@ export default ({ schedulePrediction, cardClassName }: TeamMatchupBoxComponentPr
             isScheduled,
             didHomeWin,
             homePointSpreadNo,
-            game?.pointsScoredHomeAmt 
+            game?.pointsScoredHomeAmt,
+            bettingOdds?.homeMoneylineOdds
           )}
         </tbody>
       </table>
@@ -96,7 +99,8 @@ function renderTableRowForTeam(
   isScheduled: boolean,
   didWin: boolean,
   pointSpread?: number,
-  pointsScored?: number
+  pointsScored?: number,
+  moneylineOdds?: number
 ): JSX.Element {
   const winExpStr: string = `${(winExp * 100).toFixed(1)}%`;
   const pointsScoredScheduledClassName: string = isScheduled 
@@ -124,6 +128,9 @@ function renderTableRowForTeam(
       </td>
       <td className={`${styles['td']} ${styles['point-spread']}`}>
         {pointSpread ?? ""}
+      </td>
+      <td className={`${styles['td']} ${styles['moneyline-odds']}`}>
+        {moneylineOdds?.toFixed(2) ?? ""}
       </td>
       <td className={`${styles['td']} ${styles['win-exp']}`} style={winExpStyle}>
         {winExpStr}

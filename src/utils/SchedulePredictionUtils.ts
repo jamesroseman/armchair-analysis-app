@@ -11,12 +11,21 @@ export type WeekNumberToSchedulePredictionsMap = {
 export class SchedulePredictionUtils {
 
   /**
-   * Determine whether or not a predicted game has occurred.
+   * Determine whether or not a predicted game has occurred. (Opposite of isPredictionScheduled)
    */
   public static hasPredictionOccurred(
     schedulePrediction: SchedulePrediction
   ): boolean {
     return schedulePrediction.game !== null && typeof(schedulePrediction.game) !== "undefined";
+  }
+
+  /**
+   * Determine whether or not a predicted game is scheduled. (Opposite of hasPredictionOccurred)
+   */
+  public static isPredictionScheduled(
+    schedulePrediction: SchedulePrediction
+  ): boolean {
+    return !SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
   }
 
   /**

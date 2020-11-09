@@ -18,6 +18,10 @@ export const GetSchedulePredictionsQuery = gql`
         pointsScoredVisitorAmt,
         visitorPointSpreadNo
       },
+      bettingOdds {
+        homeMoneylineOdds,
+        visitingMoneylineOdds
+      },
       weekNumber,
       seasonYear,
       dayOfWeek,

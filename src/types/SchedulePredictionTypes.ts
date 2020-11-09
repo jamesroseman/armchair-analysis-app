@@ -1,10 +1,12 @@
 import { Game } from "./GameTypes";
+import { BettingOdds } from "./BettingOddsTypes";
 import { TeamName, Day } from "./ModelConstantTypes";
 
 export type SchedulePrediction = {
   scheduleId: string,
   gameId: string,
   game?: Game,
+  bettingOdds?: BettingOdds,
   seasonYear: number,
   weekNumber: number,
   dayOfWeek: Day,
