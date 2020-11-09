@@ -83,7 +83,18 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
     confidenceLimit / 100
   );
 
-  const weekNumberToSimulationMap: { [weekNumber: string]: BettingSimulation } = occurredWeeks.reduce(
+  const scheduledWeekNumberToSimulationMap: { [weekNumber: string]: BettingSimulation } = scheduledWeeks.reduce(
+    (acc: { [weekNumber: string]: BettingSimulation }, weekNumber: string) => {
+      const predictions: SchedulePrediction[] = weekNumberToConfidentSchedulePredictionsMap[weekNumber] ?? [];
+      const simulation: BettingSimulation = BettingOddsUtils.getMultipleBettingSimulationFromSchedulePredictions(stake, predictions);
+      return {
+        ...acc,
+        [weekNumber]: simulation,
+      };
+    },
+    {}
+  );
+  const occurredWeekNumberToSimulationMap: { [weekNumber: string]: BettingSimulation } = occurredWeeks.reduce(
     (acc: { [weekNumber: string]: BettingSimulation }, weekNumber: string) => {
       const predictions: SchedulePrediction[] = weekNumberToConfidentSchedulePredictionsMap[weekNumber] ?? [];
       const simulation: BettingSimulation = BettingOddsUtils.getMultipleBettingSimulationFromSchedulePredictions(stake, predictions);
@@ -95,7 +106,7 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
     {}
   );
   const simulation: BettingSimulation = BettingOddsUtils.combineBettingSimulations(
-    Object.values(weekNumberToSimulationMap),
+    Object.values(occurredWeekNumberToSimulationMap),
   );
 
   return (
@@ -123,9 +134,9 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
         </div>
       </div>
       <div className={styles['list-of-weekly-matchups']}>
-        {renderMatchupsForWeeks(scheduledWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit)}
+        {renderMatchupsForWeeks(scheduledWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit, scheduledWeekNumberToSimulationMap)}
         <div className={`${styles['header']} ${styles['completed-header']}`}>Completed</div>
-        {renderMatchupsForWeeks(occurredWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit, weekNumberToSimulationMap)}
+        {renderMatchupsForWeeks(occurredWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit, occurredWeekNumberToSimulationMap)}
       </div>
     </div>
   );

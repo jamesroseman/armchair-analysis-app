@@ -104,12 +104,12 @@ export class BettingOddsUtils {
       (acc: number, schedulePrediction: SchedulePrediction) => {
         const didBetOnVisitingTeam: boolean = schedulePrediction.visitingTeamEloWinExp > 0.5;
         if (didBetOnVisitingTeam) {
-          return acc + (schedulePrediction.bettingOdds?.visitingMoneylineOdds ?? 1);
+          return acc * (schedulePrediction.bettingOdds?.visitingMoneylineOdds ?? 1);
         } else {
-          return acc + (schedulePrediction.bettingOdds?.homeMoneylineOdds ?? 1);
+          return acc * (schedulePrediction.bettingOdds?.homeMoneylineOdds ?? 1);
         }
       },
-      0
+      1
     );
     const payout: number = stake * accumulatedOdds;
 

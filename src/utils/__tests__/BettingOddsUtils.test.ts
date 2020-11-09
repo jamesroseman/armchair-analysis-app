@@ -222,7 +222,7 @@ describe('BettingOddsUtils', () => {
 
       // The visiting team wins and has a moneyline of 1.5
       // With a $5 stake, you would expect a $7.5 return
-      const testMoneylineOdds: number = testNewEnglandMoneylineOdds + testTampaBayMoneylineOdds;
+      const testMoneylineOdds: number = testNewEnglandMoneylineOdds * testTampaBayMoneylineOdds;
       const expectedPayout: number = testStake * testMoneylineOdds;
 
       const expectedBet: Bet = {
@@ -321,7 +321,7 @@ describe('BettingOddsUtils', () => {
       };
 
       // If a team "busts" you expect to get nothing
-      const testMoneylineOdds: number = testNewEnglandMoneylineOdds + testTampaBayMoneylineOdds;
+      const testMoneylineOdds: number = testNewEnglandMoneylineOdds * testTampaBayMoneylineOdds;
       const expectedPayout: number = 0;
 
       const expectedBet: Bet = {
@@ -425,7 +425,7 @@ describe('BettingOddsUtils', () => {
 
       const newEnglandPayout: number = testNewEnglandMoneylineOdds * testStake;
       const tampaBayPayout: number = testTampaBayMoneylineOdds * testStake;
-      const accaPayout: number = (testNewEnglandMoneylineOdds + testTampaBayMoneylineOdds) * testStake;
+      const accaPayout: number = (testNewEnglandMoneylineOdds * testTampaBayMoneylineOdds) * testStake;
       const totalPayout: number = newEnglandPayout + tampaBayPayout + accaPayout;
       const expectedBets: Bet[] = [
         {
@@ -444,7 +444,7 @@ describe('BettingOddsUtils', () => {
         },
         {
           type: BetType.Accumulator,
-          odds: (testNewEnglandMoneylineOdds + testTampaBayMoneylineOdds),
+          odds: (testNewEnglandMoneylineOdds * testTampaBayMoneylineOdds),
           stake: testStake,
           payout: accaPayout,
           predictions: [newEnglandAtNewYork, tampaBayAtNewOrleans]
