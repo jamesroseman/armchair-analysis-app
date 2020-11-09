@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { TeamName } from '../types/ModelConstantTypes';
 import { SchedulePrediction } from '../types/SchedulePredictionTypes';
 import { SchedulePredictionUtils } from '../utils/SchedulePredictionUtils';
@@ -9,13 +9,19 @@ import styles from './TeamMatchupBoxComponent.module.css';
 
 type TeamMatchupBoxComponentProps = {
   schedulePrediction: SchedulePrediction,
-  shouldHighlight?: boolean,
-  isCorrect?: boolean,
-  hasOccurred?: boolean
+  cardClassName?: string
 }
 
-export default ({ schedulePrediction, shouldHighlight, isCorrect, hasOccurred }: TeamMatchupBoxComponentProps) => {
-  const { visitingTeamName, visitingTeamEloWinExp, homeTeamName, homeTeamEloWinExp, game } = schedulePrediction;
+export default ({ schedulePrediction, cardClassName }: TeamMatchupBoxComponentProps) => {
+  const { 
+    visitingTeamName,
+    visitingTeamEloRatingRank,
+    visitingTeamEloWinExp,
+    homeTeamName,
+    homeTeamEloRatingRank,
+    homeTeamEloWinExp,
+    game 
+  } = schedulePrediction;
   const isScheduled: boolean = !SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
   const didVisitorWin: boolean = game ? (game.pointsScoredVisitorAmt > game.pointsScoredHomeAmt) : false;
   const didHomeWin: boolean = game ? (game.pointsScoredHomeAmt > game.pointsScoredVisitorAmt) : false;
@@ -32,16 +38,6 @@ export default ({ schedulePrediction, shouldHighlight, isCorrect, hasOccurred }:
     : undefined;
   }
 
-  let cardClassNames: string = styles['game-body'];
-  if (isCorrect && hasOccurred) {
-    cardClassNames += ` ${styles['correct']}`;
-  } else if (isCorrect !== null && hasOccurred) {
-    cardClassNames += ` ${styles['incorrect']}`;
-  }
-  if (shouldHighlight) {
-    cardClassNames += ` ${styles['highlight']}`;
-  }
-
   return (
     <div key={`teamMatchupBox-${schedulePrediction.scheduleId}`}>
       <table key={`teamMatchupBox-table-header-${schedulePrediction.scheduleId}`} className={styles['game-header']}>
@@ -49,10 +45,29 @@ export default ({ schedulePrediction, shouldHighlight, isCorrect, hasOccurred }:
           {renderTableHeader(isScheduled, schedulePrediction)}
         </thead>
       </table>
-      <table key={`teamMatchupBox-table-contents-${schedulePrediction.scheduleId}`} className={cardClassNames}>
+      <table 
+        key={`teamMatchupBox-table-contents-${schedulePrediction.scheduleId}`} 
+        className={`${styles['game-body']} ${cardClassName ?? ""}`}
+      >
         <tbody>
-          {renderTableRowForTeam(visitingTeamName, visitingTeamEloWinExp, isScheduled, didVisitorWin, visitorPointSpreadNo, game?.pointsScoredVisitorAmt )}
-          {renderTableRowForTeam(homeTeamName, homeTeamEloWinExp, isScheduled, didHomeWin, homePointSpreadNo, game?.pointsScoredHomeAmt )}
+          {renderTableRowForTeam(
+            visitingTeamName,
+            visitingTeamEloRatingRank,
+            visitingTeamEloWinExp,
+            isScheduled,
+            didVisitorWin,
+            visitorPointSpreadNo,
+            game?.pointsScoredVisitorAmt 
+          )}
+          {renderTableRowForTeam(
+            homeTeamName,
+            homeTeamEloRatingRank,
+            homeTeamEloWinExp,
+            isScheduled,
+            didHomeWin,
+            homePointSpreadNo,
+            game?.pointsScoredHomeAmt 
+          )}
         </tbody>
       </table>
     </div>
@@ -76,6 +91,7 @@ function renderTableHeader(
 
 function renderTableRowForTeam(
   teamName: TeamName,
+  teamRank: number,
   winExp: number,
   isScheduled: boolean,
   didWin: boolean,
@@ -83,6 +99,18 @@ function renderTableRowForTeam(
   pointsScored?: number
 ): JSX.Element {
   const winExpStr: string = `${(winExp * 100).toFixed(1)}%`;
+  const pointsScoredScheduledClassName: string = isScheduled 
+  ? styles['scheduled'] 
+  : styles['occurred']
+  const pointsScoredWinnerClassName: string = didWin 
+  ? styles['winner'] 
+  : styles['loser'];
+  const pointsScoredClassName: string = `${pointsScoredScheduledClassName} ${pointsScoredWinnerClassName}`;
+
+  const winExpStyle: CSSProperties = {
+    backgroundColor: getWinExpColor(winExp),
+  }
+
   return (
     <tr className={`${styles['tr']} ${styles['game-team']}`}>
       <td className={`${styles['td']} ${styles['logo']}`}>
@@ -90,16 +118,30 @@ function renderTableRowForTeam(
       </td>
       <td className={`${styles['td']} ${styles['team']}`}>
         {TeamNameUtils.getPrintableNameFromTeamName(teamName)}
+        <div className={styles['team-rank']}>
+          #{teamRank}
+        </div>
       </td>
       <td className={`${styles['td']} ${styles['point-spread']}`}>
         {pointSpread ?? ""}
       </td>
-      <td className={`${styles['td']} ${styles['win-exp']}`}>
+      <td className={`${styles['td']} ${styles['win-exp']}`} style={winExpStyle}>
         {winExpStr}
       </td>
-      <td className={`${styles['td']} ${styles['score']} ${isScheduled ? styles['scheduled'] : styles['occurred']} ${didWin ? styles['winner'] : styles['loser']}`}>
+      <td className={`${styles['td']} ${styles['score']} ${pointsScoredClassName}`}>
         {pointsScored ?? "-"}
       </td>
     </tr>
   );
+}
+
+function getWinExpColor(winExp: number): string {
+  const r: number = 182;
+  const floorG: number = 157;
+  // Win expectation color ranges from 197 to 255
+  // for the g-value.
+  const g: number = (winExp * 100) + floorG;
+  const b: number = 233;
+
+  return `rgb(${r}, ${g}, ${b})`;
 }

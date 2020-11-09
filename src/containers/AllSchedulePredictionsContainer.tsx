@@ -28,7 +28,34 @@ export default ({ schedulePredictions }: AllSchedulePredictionsProps) => {
   const predictions = shouldOnlyDisplayConfidentPredictions ? confidentPredictions : schedulePredictions;
   const weekNumberToSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap = SchedulePredictionUtils.getWeekNumberToSchedulePredictionsMap(predictions);
   const sequentialWeekNumbers: string[] = Object.keys(weekNumberToSchedulePredictionsMap);
-  const currentWeek: string = sequentialWeekNumbers.pop() ?? "";
+  
+  // If all of the games in a week have occurred, the games should be listed in the "completed" section.
+  const occurredWeeks: string[] = sequentialWeekNumbers.filter(
+    (weekNumber: string) => {
+      const schedulePredictions: SchedulePrediction[] = weekNumberToSchedulePredictionsMap[weekNumber];
+      return schedulePredictions.reduce(
+        (agg: boolean, schedulePrediction: SchedulePrediction) => {
+          const hasOccurred: boolean = SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
+          return hasOccurred && agg;
+        },
+        true
+      );
+    },
+  );
+
+  // If any of the games in a week are scheduled and have not occurred, the games should be listed in the "scheduled" section.
+  const scheduledWeeks: string[] = sequentialWeekNumbers.filter(
+    (weekNumber: string) => {
+      const schedulePredictions: SchedulePrediction[] = weekNumberToSchedulePredictionsMap[weekNumber];
+      return schedulePredictions.reduce(
+        (agg: boolean, schedulePrediction: SchedulePrediction) => {
+          const isScheduled: boolean = !SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
+          return isScheduled || agg;
+        },
+        false
+      );
+    },
+  );
 
   const handleConfidenceLimitSliderEvent = (event: any) => {
     const newConfidenceLimitStr: string = event.target.value ?? confidenceLimit.toString();
@@ -58,12 +85,14 @@ export default ({ schedulePredictions }: AllSchedulePredictionsProps) => {
         <div className={styles['confident-predictions-toggle-title']}>
           Only Display Confident Predictions?
         </div>
-        <input className={styles['confident-predictions-toggle-checkbox']} type="checkbox" checked={shouldOnlyDisplayConfidentPredictions} onChange={handleDisplayConfidentPredictionsOnlyToggle} />
+        <div className={styles['confident-predictions-toggle-checkbox']}>
+          <input type="checkbox" checked={shouldOnlyDisplayConfidentPredictions} onChange={handleDisplayConfidentPredictionsOnlyToggle} />
+        </div>
       </div>
       <div className={styles['list-of-weekly-matchups']}>
-        {renderMatchupsForWeeks([currentWeek], weekNumberToSchedulePredictionsMap, confidenceLimit)}
+        {renderMatchupsForWeeks(scheduledWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit)}
         <div className={`${styles['header']} ${styles['completed-header']}`}>Completed</div>
-        {renderMatchupsForWeeks(sequentialWeekNumbers, weekNumberToSchedulePredictionsMap, confidenceLimit)}
+        {renderMatchupsForWeeks(occurredWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit)}
       </div>
     </div>
   );
@@ -110,14 +139,19 @@ function renderSchedulePredictionRow(schedulePrediction: SchedulePrediction, con
   const shouldHighlight: boolean = SchedulePredictionUtils.isPredictionConfident(schedulePrediction, confidenceLimit / 100);
   const hasOccurred: boolean = SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
   const isCorrect: boolean = SchedulePredictionUtils.isPredictionCorrect(schedulePrediction);
+  const cardClassName: string = shouldHighlight 
+  ? (
+    hasOccurred 
+    ? (isCorrect ? styles['matchup-box-card-highlight-correct'] : styles['matchup-box-card-highlight-incorrect'] )
+    : styles['matchup-box-card-highlight']
+  )
+  : "";
 
   return(
     <div key={`matchupbox-${schedulePrediction.scheduleId}`} className={styles['matchup-box']}>
       <TeamMatchupBoxComponent 
         schedulePrediction={schedulePrediction} 
-        shouldHighlight={shouldHighlight} 
-        isCorrect={isCorrect} 
-        hasOccurred={hasOccurred}
+        cardClassName={cardClassName}
       />
     </div>
   );
