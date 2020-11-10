@@ -176,4 +176,28 @@ export class SchedulePredictionUtils {
     );
   }
 
+  /**
+   * Group confident SchedulePredictions by their week numbers.
+   */
+  public static getWeekNumberToConfidentSchedulePredictionsMap(
+    schedulePredictions: SchedulePrediction[],
+    confidenceLimit: number
+  ): WeekNumberToSchedulePredictionsMap {
+    return schedulePredictions.reduce(
+      (agg: WeekNumberToSchedulePredictionsMap, sp: SchedulePrediction) => {
+        if (!SchedulePredictionUtils.isPredictionConfident(sp, confidenceLimit)) {
+          return agg;
+        }
+        if (!agg.hasOwnProperty(sp.weekNumber)) {
+          agg[sp.weekNumber] = [];
+        }
+        return {
+          ...agg,
+          [sp.weekNumber]: [ ...agg[sp.weekNumber], sp ],
+        }
+      },
+      {}
+    );
+  }
+
 }

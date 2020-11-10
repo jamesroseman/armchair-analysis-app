@@ -30,8 +30,12 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
     return SchedulePredictionUtils.isPredictionConfident(schedulePrediction, confidenceLimit / 100);
   });
   const predictions = shouldOnlyDisplayConfidentPredictions ? confidentPredictions : schedulePredictions;
-  const weekNumberToSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap = SchedulePredictionUtils.getWeekNumberToSchedulePredictionsMap(predictions);
-  const weekNumberToConfidentSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap = SchedulePredictionUtils.getWeekNumberToSchedulePredictionsMap(confidentPredictions);
+
+  const weekNumberToSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap = 
+    SchedulePredictionUtils.getWeekNumberToSchedulePredictionsMap(predictions);
+  const weekNumberToConfidentSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap = 
+    SchedulePredictionUtils.getWeekNumberToConfidentSchedulePredictionsMap(predictions, confidenceLimit / 100);
+
   const sequentialWeekNumbers: string[] = Object.keys(weekNumberToSchedulePredictionsMap);
   
   // If all of the games in a week have occurred, the games should be listed in the "completed" section.
@@ -105,6 +109,7 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
     },
     {}
   );
+
   const simulation: BettingSimulation = BettingOddsUtils.combineBettingSimulations(
     Object.values(occurredWeekNumberToSimulationMap),
   );

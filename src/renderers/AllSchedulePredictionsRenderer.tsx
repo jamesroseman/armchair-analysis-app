@@ -5,8 +5,8 @@ import { GetSchedulePredictionsQuery, GetSchedulePredictionsQueryResponse } from
 
 export default () => (
   <Query query={GetSchedulePredictionsQuery}>
-    {({ loading, data }: GetSchedulePredictionsQueryResponse) => !loading && (
+    {({ loading, data }: GetSchedulePredictionsQueryResponse) => !loading && 
       <AllSchedulePredictionsContainer schedulePredictions={data?.schedulePredictions ?? []} />
-    )}
+    }
   </Query>
 );

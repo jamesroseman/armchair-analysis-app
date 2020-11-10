@@ -9,19 +9,22 @@ describe('BettingOddsUtils', () => {
         stake: 15,
         payout: 30,
         profit: 15,
-        bets: []
+        bets: [],
+        stdDev: 0
       };
       const testSimulationB: BettingSimulation = {
         stake: 4,
         payout: 0,
         profit: -4,
-        bets: []
+        bets: [],
+        stdDev: 0
       };
       const expectedSimulation: BettingSimulation = {
         stake: 19,
         payout: 30,
         profit: 11,
-        bets: []
+        bets: [],
+        stdDev: 0
       };
       const simulation: BettingSimulation = BettingOddsUtils.combineBettingSimulations([
         testSimulationA,
@@ -454,7 +457,8 @@ describe('BettingOddsUtils', () => {
         stake: totalStake,
         payout: totalPayout,
         profit: totalPayout - (testStake * 3),
-        bets: expectedBets
+        bets: expectedBets,
+        stdDev: 1.161416759345623
       };
 
       const simulation: BettingSimulation = BettingOddsUtils.getMultipleBettingSimulationFromSchedulePredictions(

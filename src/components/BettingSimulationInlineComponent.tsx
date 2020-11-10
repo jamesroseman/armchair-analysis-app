@@ -12,6 +12,10 @@ export default ({ simulation }: BettingSimulationInlineComponentProps) => {
     profit,
     bets
   } = simulation;
+  const prettyPrintNumber: (num: number, digits?: number) => string = (num: number, digits: number = 2) => {
+    return num.toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });
+  };
+
   const betCount: number = bets.length;
 
   if (stake === 0) {
@@ -19,12 +23,12 @@ export default ({ simulation }: BettingSimulationInlineComponentProps) => {
   }
 
   const profitStr: string = profit > 0
-  ? `Profit of €${profit.toFixed(2)}`
-  : `Loss of €${(profit * -1).toFixed(2)}`;
+  ? `Profit of €${prettyPrintNumber(profit)}`
+  : `Loss of €${prettyPrintNumber(profit * -1)}`;
 
   return (
     <div className={styles['title']}>
-      {profitStr} on €{stake.toFixed(2)} over {betCount} bets.
+      {profitStr} on €{prettyPrintNumber(stake)} over {prettyPrintNumber(betCount, 0)} bets.
     </div>
   );
 }

@@ -60,8 +60,8 @@ export default ({ accuracy, confidenceLimit, handleConfidenceLimitSliderEvent }:
           <div className={styles['confidence-limit-slider']} >
             <input 
               type="range" 
-              min="500" 
-              max="1000" 
+              min="530" 
+              max="850" 
               value={confidenceLimit * 10} 
               onChange={handleConfidenceLimitSliderEvent} 
             />

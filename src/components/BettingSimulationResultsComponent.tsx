@@ -13,6 +13,7 @@ export default({ simulation, setStake, handleStakeSliderEvent }: BettingSimulati
     stake,
     payout,
     profit,
+    stdDev,
     bets
   } = simulation;
 
@@ -39,6 +40,7 @@ export default({ simulation, setStake, handleStakeSliderEvent }: BettingSimulati
                 <th className={styles['th']}>Stake</th>
                 <th className={styles['th']}>Payout</th>
                 <th className={styles['th']}>Profit</th>
+                <th className={styles['th']}>Deviation</th>
                 <th className={styles['th']}>Profit Margin</th>
                 <th className={styles['th']}>Stake</th>
               </tr>
@@ -49,6 +51,7 @@ export default({ simulation, setStake, handleStakeSliderEvent }: BettingSimulati
                 <td className={`${styles['td']} ${styles['data']}`}>€{prettyPrintNumber(stake)}</td>
                 <td className={`${styles['td']} ${styles['data']}`}>{payoutStr}</td>
                 <td className={`${styles['td']} ${styles['data']}`}>{profitStr}</td>
+                <td className={`${styles['td']} ${styles['data']}`}>€{prettyPrintNumber(stdDev)}</td>
                 <td className={`${styles['td']} ${styles['data']}`}>{prettyPrintNumber(profitMargin)}%</td>
                 <td className={`${styles['td']} ${styles['data']} ${styles['stake']}`}>{prettyPrintNumber(setStake, 0)}</td>
               </tr>

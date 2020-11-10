@@ -1,6 +1,6 @@
 import { SchedulePrediction } from "../types/SchedulePredictionTypes";
-import { setPowerset } from "mathjs";
 import { SchedulePredictionUtils } from "./SchedulePredictionUtils";
+import { MathUtils } from "./MathUtils";
 
 export enum BetType {
   Powerset = 1,
@@ -23,6 +23,7 @@ export type BettingSimulation = {
   stake: number,
   payout: number,
   profit: number,
+  stdDev: number,
   bets: Bet[]
 }
 
@@ -34,20 +35,29 @@ export class BettingOddsUtils {
   public static combineBettingSimulations(
     simulations: BettingSimulation[],
   ): BettingSimulation {
-    return simulations.reduce(
+    const simulationWithoutStdDev: BettingSimulation = simulations.reduce(
       (acc: BettingSimulation, simulation: BettingSimulation) => ({
         stake: acc.stake + simulation.stake,
         payout: acc.payout + simulation.payout,
         profit: acc.profit + simulation.profit,
+        stdDev: 0,
         bets: [...acc.bets, ...simulation.bets]
       }),
       {
         stake: 0,
         payout: 0,
         profit: 0,
+        stdDev: 0,
         bets: []
       } as BettingSimulation
     );
+    const bets: Bet[] = simulationWithoutStdDev.bets;
+    const profits: number[] = bets.map((b: Bet) => b.payout - b.stake);
+    const stdDev: number = MathUtils.stddev(profits);
+    return {
+      ...simulationWithoutStdDev,
+      stdDev
+    };
   }
 
   /**
@@ -68,7 +78,7 @@ export class BettingOddsUtils {
 
     // The types for this package are incorrect. setPowerset returns a multi-dimensional array
     // but its type indicates that it only returns a one-dimensional array.
-    const indexPowerset: number[][] = (setPowerset(schedulePredictionIndices) as unknown as number[][])
+    const indexPowerset: number[][] = (MathUtils.getPowerset(schedulePredictionIndices) as unknown as number[][])
       .filter((indices: number[]) => indices.length > 0);
 
     const bets: Bet[] = indexPowerset.map((indices: number[]) => {
@@ -83,10 +93,13 @@ export class BettingOddsUtils {
       0
     );
     const profit: number = totalPayout - totalStake;
+    const profits: number[] = bets.map((b: Bet) => b.payout - b.stake);
+    const stdDev: number = MathUtils.stddev(profits);
     return {
       stake: totalStake,
       payout: totalPayout,
       profit,
+      stdDev,
       bets
     } as BettingSimulation;
   }
