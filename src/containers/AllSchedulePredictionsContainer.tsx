@@ -21,15 +21,16 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
   if (schedulePredictions.length === 0) { 
     return <div>No schedule predictions were found.</div> 
   }
-
   const [confidenceLimit, setConfidenceLimit] = useState(DEFAULT_CONFIDENCE_LIMIT);
   const [stake, setStake] = useState(DEFAULT_STAKE);
   const [shouldOnlyDisplayConfidentPredictions, setShouldOnlyDisplayConfidentPredictions] = useState(false);
+  const [shouldDisplayMoneylineAsDecimal, setShouldDisplayMoneylineAsDecimal] = useState(true);
 
-  const confidentPredictions: SchedulePrediction[] = schedulePredictions.filter((schedulePrediction: SchedulePrediction) => {
+  const uniquePredictions: SchedulePrediction[] = SchedulePredictionUtils.getUniqueSchedulePredictions(schedulePredictions);
+  const confidentPredictions: SchedulePrediction[] = uniquePredictions.filter((schedulePrediction: SchedulePrediction) => {
     return SchedulePredictionUtils.isPredictionConfident(schedulePrediction, confidenceLimit / 100);
   });
-  const predictions = shouldOnlyDisplayConfidentPredictions ? confidentPredictions : schedulePredictions;
+  const predictions = shouldOnlyDisplayConfidentPredictions ? confidentPredictions : uniquePredictions;
 
   const weekNumberToSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap = 
     SchedulePredictionUtils.getWeekNumberToSchedulePredictionsMap(predictions);
@@ -79,11 +80,15 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
   }
 
   const handleDisplayConfidentPredictionsOnlyToggle = (event: any) => {
-    setShouldOnlyDisplayConfidentPredictions(event.target.checked)
+    setShouldOnlyDisplayConfidentPredictions(event.target.checked);
+  }
+
+  const handleDisplayMoneylineFractionToggle = (event: any) => {
+    setShouldDisplayMoneylineAsDecimal(event.target.checked);
   }
 
   const accuracy: SchedulePredictionsAccuracy = SchedulePredictionUtils.getAccuracyFromSchedulePredictions(
-    schedulePredictions,
+    uniquePredictions,
     confidenceLimit / 100
   );
 
@@ -130,18 +135,26 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
           handleStakeSliderEvent={handleStakeSliderEvent}
         />
       </div>
-      <div className={styles['confident-predictions-toggle']}>
-        <div className={styles['confident-predictions-toggle-title']}>
+      <div className={styles['toggle']}>
+        <div className={styles['toggle-title']}>
           Only Display Confident Predictions?
         </div>
-        <div className={styles['confident-predictions-toggle-checkbox']}>
+        <div className={styles['toggle-checkbox']}>
           <input type="checkbox" checked={shouldOnlyDisplayConfidentPredictions} onChange={handleDisplayConfidentPredictionsOnlyToggle} />
         </div>
       </div>
+      <div className={styles['toggle']}>
+        <div className={styles['toggle-title']}>
+          Display Moneyline Odds as Decimal?
+        </div>
+        <div className={styles['toggle-checkbox']}>
+          <input type="checkbox" checked={shouldDisplayMoneylineAsDecimal} onChange={handleDisplayMoneylineFractionToggle} />
+        </div>
+      </div>
       <div className={styles['list-of-weekly-matchups']}>
-        {renderMatchupsForWeeks(scheduledWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit, scheduledWeekNumberToSimulationMap)}
+        {renderMatchupsForWeeks(scheduledWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit, scheduledWeekNumberToSimulationMap, shouldDisplayMoneylineAsDecimal)}
         <div className={`${styles['header']} ${styles['completed-header']}`}>Completed</div>
-        {renderMatchupsForWeeks(occurredWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit, occurredWeekNumberToSimulationMap)}
+        {renderMatchupsForWeeks(occurredWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit, occurredWeekNumberToSimulationMap, shouldDisplayMoneylineAsDecimal)}
       </div>
     </div>
   );
@@ -151,7 +164,8 @@ function renderMatchupsForWeeks(
   weekNumbers: string[], 
   weekNumberToSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap,
   confidenceLimit: number,
-  weekNumberToSimulationMap: { [weekNumber: string]: BettingSimulation } = {}
+  weekNumberToSimulationMap: { [weekNumber: string]: BettingSimulation } = {},
+  shouldDisplayMoneylineAsDecimal?: boolean
 ): JSX.Element[] {
   return weekNumbers.map((weekNumber: string) => {
     const schedulePredictions: SchedulePrediction[] = weekNumberToSchedulePredictionsMap[weekNumber];
@@ -161,7 +175,7 @@ function renderMatchupsForWeeks(
       <div key={`matchups-for-weeks-${Math.random()}`}>
         <div className={styles['week-number']}>Week {weekNumber}</div>
         {weekNumberToSimulationMap.hasOwnProperty(weekNumber) ? <BettingSimulationInlineComponent simulation={weekNumberToSimulationMap[weekNumber]} /> : null}
-        {renderMatchupsForWeek(dates, dateToSchedulePredictionsMap, confidenceLimit)}
+        {renderMatchupsForWeek(dates, dateToSchedulePredictionsMap, confidenceLimit, shouldDisplayMoneylineAsDecimal)}
       </div>
     );
   });
@@ -170,7 +184,8 @@ function renderMatchupsForWeeks(
 function renderMatchupsForWeek(
   dates: string[], 
   dateToSchedulePredictionsMap: DateToSchedulePredictionsMap,
-  confidenceLimit: number
+  confidenceLimit: number,
+  shouldDisplayMoneylineAsDecimal?: boolean
 ): JSX.Element[] {
   return dates.map((date: string) => {
     const dayOfWeek: Day = dateToSchedulePredictionsMap[date][0].dayOfWeek;
@@ -179,14 +194,18 @@ function renderMatchupsForWeek(
       <div key={date}>
         <div className={styles['date']}>{printableDate}</div>
         <div className={styles['week-matchups']}>
-          {dateToSchedulePredictionsMap[date].map((schedulePrediction: SchedulePrediction) => renderSchedulePredictionRow(schedulePrediction, confidenceLimit))}
+          {dateToSchedulePredictionsMap[date].map((schedulePrediction: SchedulePrediction) => renderSchedulePredictionRow(schedulePrediction, confidenceLimit, shouldDisplayMoneylineAsDecimal))}
         </div>
       </div>
     );
   });
 }
 
-function renderSchedulePredictionRow(schedulePrediction: SchedulePrediction, confidenceLimit: number): JSX.Element {
+function renderSchedulePredictionRow(
+  schedulePrediction: SchedulePrediction, 
+  confidenceLimit: number,
+  shouldDisplayMoneylineAsDecimal?: boolean
+): JSX.Element {
   const shouldHighlight: boolean = SchedulePredictionUtils.isPredictionConfident(schedulePrediction, confidenceLimit / 100);
   const hasOccurred: boolean = SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
   const isCorrect: boolean = SchedulePredictionUtils.isPredictionCorrect(schedulePrediction);
@@ -203,6 +222,7 @@ function renderSchedulePredictionRow(schedulePrediction: SchedulePrediction, con
       <TeamMatchupBoxComponent 
         schedulePrediction={schedulePrediction} 
         cardClassName={cardClassName}
+        shouldDisplayMoneylineAsDecimal={shouldDisplayMoneylineAsDecimal}
       />
     </div>
   );

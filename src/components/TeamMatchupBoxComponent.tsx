@@ -9,10 +9,11 @@ import styles from './TeamMatchupBoxComponent.module.css';
 
 type TeamMatchupBoxComponentProps = {
   schedulePrediction: SchedulePrediction,
-  cardClassName?: string
+  cardClassName?: string,
+  shouldDisplayMoneylineAsDecimal?: boolean
 }
 
-export default ({ schedulePrediction, cardClassName }: TeamMatchupBoxComponentProps) => {
+export default ({ schedulePrediction, cardClassName, shouldDisplayMoneylineAsDecimal }: TeamMatchupBoxComponentProps) => {
   const { 
     visitingTeamName,
     visitingTeamEloRatingRank,
@@ -59,7 +60,8 @@ export default ({ schedulePrediction, cardClassName }: TeamMatchupBoxComponentPr
             didVisitorWin,
             visitorPointSpreadNo,
             game?.pointsScoredVisitorAmt,
-            bettingOdds?.visitingMoneylineOdds
+            bettingOdds?.visitingMoneylineOdds,
+            shouldDisplayMoneylineAsDecimal
           )}
           {renderTableRowForTeam(
             homeTeamName,
@@ -69,7 +71,8 @@ export default ({ schedulePrediction, cardClassName }: TeamMatchupBoxComponentPr
             didHomeWin,
             homePointSpreadNo,
             game?.pointsScoredHomeAmt,
-            bettingOdds?.homeMoneylineOdds
+            bettingOdds?.homeMoneylineOdds,
+            shouldDisplayMoneylineAsDecimal
           )}
         </tbody>
       </table>
@@ -100,9 +103,16 @@ function renderTableRowForTeam(
   didWin: boolean,
   pointSpread?: number,
   pointsScored?: number,
-  moneylineOdds?: number
+  moneylineOdds?: number,
+  shouldDisplayMoneylineAsDecimal: boolean = true
 ): JSX.Element {
   const winExpStr: string = `${(winExp * 100).toFixed(1)}%`;
+  const moneyLineWinExp: number = (1 / (moneylineOdds ?? 1)) * 100;
+  const moneylineWinExpStr: string = moneylineOdds ? `${moneyLineWinExp.toFixed(1)}%` : "";
+  const moneylineStr: string = shouldDisplayMoneylineAsDecimal 
+  ? moneylineOdds?.toFixed(2) ?? ""
+  : moneylineWinExpStr
+
   const pointsScoredScheduledClassName: string = isScheduled 
   ? styles['scheduled'] 
   : styles['occurred']
@@ -130,7 +140,7 @@ function renderTableRowForTeam(
         {pointSpread ?? ""}
       </td>
       <td className={`${styles['td']} ${styles['moneyline-odds']}`}>
-        {moneylineOdds?.toFixed(2) ?? ""}
+        {moneylineStr}
       </td>
       <td className={`${styles['td']} ${styles['win-exp']}`} style={winExpStyle}>
         {winExpStr}

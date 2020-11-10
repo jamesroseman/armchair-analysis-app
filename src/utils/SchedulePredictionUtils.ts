@@ -11,6 +11,22 @@ export type WeekNumberToSchedulePredictionsMap = {
 export class SchedulePredictionUtils {
 
   /**
+   * Remove duplicate schedule predictions from a list.
+   */
+  public static getUniqueSchedulePredictions(
+    schedulePredictions: SchedulePrediction[],
+  ): SchedulePrediction[] {
+    const scheduleIdToPredictionMap: { [scheduleId: string]: SchedulePrediction } = schedulePredictions.reduce(
+      (acc: { [scheduleId: string]: SchedulePrediction }, schedulePrediction: SchedulePrediction) => ({
+        ...acc,
+        [schedulePrediction.scheduleId]: schedulePrediction
+      }),
+      {}
+    );
+    return Object.values(scheduleIdToPredictionMap);
+  }
+
+  /**
    * Determine whether or not a predicted game has occurred. (Opposite of isPredictionScheduled)
    */
   public static hasPredictionOccurred(

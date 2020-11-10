@@ -22,6 +22,7 @@
   align-items: center;
   vertical-align: middle;
   font-size: 13px;
+  width: 70px;
 }
 
 .th {
@@ -73,6 +74,7 @@
 }
 
 .point-spread {
+  margin-right: 3px;
   line-height: 1;
   letter-spacing: -0.8px;
   border-left: 2px solid #fff;
@@ -81,13 +83,10 @@
   font-family: 'Courier New', Courier, monospace;
   font-weight: 600;
   color: #666;
-
-  width: 65px;
 }
 
 .moneyline-odds {
-  padding-left: 3px;
-  padding-right: 7px;
+  padding-right: 3px;
   line-height: 1;
   letter-spacing: -0.8px;
 
@@ -95,13 +94,12 @@
   font-family: 'Courier New', Courier, monospace;
   font-weight: 600;
   color: rgb(77, 114, 68);
-
-  width: 60px;
 }
 
 .win-exp {
   line-height: 1;
   letter-spacing: -0.8px;
+  border-left: 2px solid #fff;
 
   font-family: 'Courier New', Courier, monospace;
   font-weight: 575;

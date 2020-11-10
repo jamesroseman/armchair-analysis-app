@@ -72,20 +72,21 @@
   border-bottom: 1px dotted #000;
 }
 
-.confident-predictions-toggle {
+.toggle {
   margin-top: 8px;
   display: flex;
   flex-direction: row;
 }
 
-.confident-predictions-toggle-title {
+.toggle-title {
   margin-right: 5px;
   font-size: 13px;
   letter-spacing: -0.25px;
   margin-left: 5px;
+  width: 230px;
 }
 
-.confident-predictions-toggle-checkbox {
+.toggle-checkbox {
   vertical-align: middle;
   font-size: 12px;
 }
