@@ -175,7 +175,7 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
       <div className={styles['list-of-weekly-matchups']}>
         {renderMatchupsForWeeks(scheduledWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit, scheduledWeekNumberToSimulationMap, shouldDisplayMoneylineAsDecimal)}
         <div className={`${styles['header']} ${styles['completed-header']}`}>Completed</div>
-        {renderMatchupsForWeeks(occurredWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit, occurredWeekNumberToSimulationMap, shouldDisplayMoneylineAsDecimal)}
+        {renderMatchupsForWeeks(occurredWeeks, weekNumberToSchedulePredictionsMap, confidenceLimit, occurredWeekNumberToSimulationMap, shouldDisplayMoneylineAsDecimal, true)}
       </div>
     </div>
   );
@@ -186,7 +186,8 @@ function renderMatchupsForWeeks(
   weekNumberToSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap,
   confidenceLimit: number,
   weekNumberToSimulationMap: { [weekNumber: string]: BettingSimulation } = {},
-  shouldDisplayMoneylineAsDecimal?: boolean
+  shouldDisplayMoneylineAsDecimal?: boolean,
+  shouldDisplayProfitLoss: boolean = false
 ): JSX.Element[] {
   return weekNumbers.map((weekNumber: string) => {
     const schedulePredictions: SchedulePrediction[] = weekNumberToSchedulePredictionsMap[weekNumber];
@@ -195,7 +196,7 @@ function renderMatchupsForWeeks(
     return (
       <div key={`matchups-for-weeks-${Math.random()}`}>
         <div className={styles['week-number']}>Week {weekNumber}</div>
-        {weekNumberToSimulationMap.hasOwnProperty(weekNumber) ? <BettingSimulationInlineComponent simulation={weekNumberToSimulationMap[weekNumber]} /> : null}
+        {shouldDisplayProfitLoss && weekNumberToSimulationMap.hasOwnProperty(weekNumber) ? <BettingSimulationInlineComponent simulation={weekNumberToSimulationMap[weekNumber]} /> : null}
         {renderMatchupsForWeek(dates, dateToSchedulePredictionsMap, confidenceLimit, shouldDisplayMoneylineAsDecimal)}
       </div>
     );

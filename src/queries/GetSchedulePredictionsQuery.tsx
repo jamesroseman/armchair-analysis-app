@@ -27,11 +27,9 @@ export const GetSchedulePredictionsQuery = gql`
       dayOfWeek,
       date,
       homeTeamName,
-      homeTeamEloRating,
       homeTeamEloRatingRank,
       homeTeamEloWinExp,
       visitingTeamName,
-      visitingTeamEloRating,
       visitingTeamEloRatingRank,
       visitingTeamEloWinExp
     }

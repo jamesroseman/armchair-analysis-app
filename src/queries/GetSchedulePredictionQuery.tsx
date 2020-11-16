@@ -18,70 +18,23 @@ export const GetSchedulePredictionQuery = gql`
       date,
       homeTeamName,
       visitingTeamName,
-      homePointsScoredAmt,
-      homePointsScoredAmtAvg,
-      homePointsScoredRank,
-      homePointsAllowedAmt,
-      homePointsAllowedAmtAvg,
-      homePointsAllowedRank,
-      homeRushingAttemptsAmt,
-      homeRushingAttemptsRank,
-      homeRushingAttemptsAllowedAmt,
-      homeRushingAttemptsAllowedRank,
-      homeRushingYardsAmt,
-      homeRushingYardsAmtAvg,
-      homeRushingYardsRank,
-      homeRushingYardsAllowedAmt,
-      homeRushingYardsAllowedRank,
-      homeRushingFirstDownsAmt,
-      homeRushingFirstDownsRank,
-      homeRushingFirstDownsAllowedAmt,
-      homeRushingFirstDownsAllowedRank,
-      homePassingAttemptsAmt,
-      homePassingAttemptsRank,
-      homePassingAttemptsAllowedAmt,
-      homePassingAttemptsAllowedRank,
-      homePassingYardsAmt,
-      homePassingYardsAmtAvg,
-      homePassingYardsRank,
-      homePassingYardsAllowedAmt,
-      homePassingYardsAllowedRank,
-      homePassingFirstDownsAmt,
-      homePassingFirstDownsRank,
-      homePassingFirstDownsAllowedAmt,
-      homePassingFirstDownsAllowedRank,
-      visitingPointsScoredAmt,
-      visitingPointsScoredAmtAvg,
-      visitingPointsScoredRank,
-      visitingPointsAllowedAmt,
-      visitingPointsAllowedAmtAvg,
-      visitingPointsAllowedRank,
-      visitingRushingAttemptsAmt,
-      visitingRushingAttemptsRank,
-      visitingRushingAttemptsAllowedAmt,
-      visitingRushingAttemptsAllowedRank,
-      visitingRushingYardsAmt,
-      visitingRushingYardsAmtAvg,
-      visitingRushingYardsRank,
-      visitingRushingYardsAllowedAmt,
-      visitingRushingYardsAllowedRank,
-      visitingRushingFirstDownsAmt,
-      visitingRushingFirstDownsRank,
-      visitingRushingFirstDownsAllowedAmt,
-      visitingRushingFirstDownsAllowedRank,
-      visitingPassingAttemptsAmt,
-      visitingPassingAttemptsRank,
-      visitingPassingAttemptsAllowedAmt,
-      visitingPassingAttemptsAllowedRank,
-      visitingPassingYardsAmt,
-      visitingPassingYardsAmtAvg,
-      visitingPassingYardsRank,
-      visitingPassingYardsAllowedAmt,
-      visitingPassingYardsAllowedRank,
-      visitingPassingFirstDownsAmt,
-      visitingPassingFirstDownsRank,
-      visitingPassingFirstDownsAllowedAmt,
-      visitingPassingFirstDownsAllowedRank,
+      metrics {
+        metricName
+        homeTeamMetricRank
+        homeTeamMetricAmt
+        homeTeamMetricAvg
+        visitingTeamMetricRank
+        visitingTeamMetricAmt
+        visitingTeamMetricAvg
+        
+        allowedMetricName
+        allowedHomeTeamMetricRank
+        allowedHomeTeamMetricAmt
+        allowedHomeTeamMetricAvg
+        allowedVisitingTeamMetricRank
+        allowedVisitingTeamMetricAmt
+        allowedVisitingTeamMetricAvg
+      }
     },
   },
 `;

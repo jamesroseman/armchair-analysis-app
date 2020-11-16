@@ -1,142 +1,48 @@
 import React from 'react';
 import { SchedulePrediction } from '../types/SchedulePredictionTypes';
+import { SchedulePredictionAggregationMetric } from '../types/SchedulePredictionAggregationMetricTypes';
 import styles from './HeadToHeadTableComponent.module.css';
 
 type HeadToHeadTableComponentProps = {
   schedulePrediction: SchedulePrediction
 }
 
-export default ({ schedulePrediction: SchedulePrediction }: HeadToHeadTableComponentProps) => {
-  const {
-    // Points Scored
-    visitingPointsScoredRank,
-    visitingPointsScoredAmt,
-    visitingPointsScoredAmtAvg,
-    visitingPointsAllowedRank,
-    visitingPointsAllowedAmt,
-    visitingPointsAllowedAmtAvg,
-    homePointsScoredRank,
-    homePointsScoredAmt,
-    homePointsScoredAmtAvg,
-    homePointsAllowedRank,
-    homePointsAllowedAmt,
-    homePointsAllowedAmtAvg,
-    // Rushing Yards
-    visitingRushingYardsRank,
-    visitingRushingYardsAmt,
-    visitingRushingYardsAllowedRank,
-    visitingRushingYardsAllowedAmt,
-    homeRushingYardsRank,
-    homeRushingYardsAmt,
-    homeRushingYardsAllowedRank,
-    homeRushingYardsAllowedAmt,
-    // Passing Yards
-    visitingPassingYardsRank,
-    visitingPassingYardsAmt,
-    visitingPassingYardsAllowedRank,
-    visitingPassingYardsAllowedAmt,
-    homePassingYardsRank,
-    homePassingYardsAmt,
-    homePassingYardsAllowedRank,
-    homePassingYardsAllowedAmt,
-  } = SchedulePrediction;
+export default ({ schedulePrediction }: HeadToHeadTableComponentProps) => {
+  const { metrics } = schedulePrediction;
 
-  const pointsScoredMetricsParams: GenRowsForMetricsParams = {
-    metricName: "Points Scored",
-    allowedMetricName: "Points Allowed",
-    visitingMetricRank: visitingPointsScoredRank,
-    visitingMetricAmt: visitingPointsScoredAmt,
-    visitingMetricAmtAvg: visitingPointsScoredAmtAvg,
-    visitingAllowedMetricRank: visitingPointsAllowedRank,
-    visitingAllowedMetricAmt: visitingPointsAllowedAmt,
-    visitingAllowedMetricAmtAvg: visitingPointsAllowedAmtAvg,
-    homeMetricRank: homePointsScoredRank,
-    homeMetricAmt: homePointsScoredAmt,
-    homeMetricAmtAvg: homePointsScoredAmtAvg,
-    homeAllowedMetricRank: homePointsAllowedRank,
-    homeAllowedMetricAmt: homePointsAllowedAmt,
-    homeAllowedMetricAmtAvg: homePointsAllowedAmtAvg
-  };
-
-  const rushingYardsMetricsParams: GenRowsForMetricsParams = {
-    metricName: "Rushing Yards",
-    allowedMetricName: "Rushing Yards Allowed",
-    visitingMetricAmt: visitingRushingYardsAmt,
-    visitingMetricRank: visitingRushingYardsRank,
-    visitingAllowedMetricAmt: visitingRushingYardsAllowedAmt,
-    visitingAllowedMetricRank: visitingRushingYardsAllowedRank,
-    homeMetricAmt: homeRushingYardsAmt,
-    homeMetricRank: homeRushingYardsRank,
-    homeAllowedMetricRank: homeRushingYardsAllowedRank,
-    homeAllowedMetricAmt: homeRushingYardsAllowedAmt,
-  };
-
-  const passingYardsMetricsParams: GenRowsForMetricsParams = {
-    metricName: "Passing Yards",
-    allowedMetricName: "Passing Yards Allowed",
-    visitingMetricAmt: visitingPassingYardsAmt,
-    visitingMetricRank: visitingPassingYardsRank,
-    visitingAllowedMetricAmt: visitingPassingYardsAllowedAmt,
-    visitingAllowedMetricRank: visitingPassingYardsAllowedRank,
-    homeMetricAmt: homePassingYardsAmt,
-    homeMetricRank: homePassingYardsRank,
-    homeAllowedMetricRank: homePassingYardsAllowedRank,
-    homeAllowedMetricAmt: homePassingYardsAllowedAmt,
-  };
-  
   return (
     <div className={styles['head-to-head']}>
-      <table className={styles['table']}>
-        <thead>
-          <tr>
-            <th></th>
-            <th className={styles['th']}>Aggregation Stats</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {genRowsForMetric(pointsScoredMetricsParams)}
-          {genRowsForMetric(rushingYardsMetricsParams)}
-          {genRowsForMetric(passingYardsMetricsParams)}
-        </tbody>
-      </table>
+      {metrics?.map(genTableForMetric)}
     </div>
-  )
+  );
 }
 
-type GenRowsForMetricsParams = {
-  metricName: string,
-  allowedMetricName: string,
-  visitingMetricRank: number,
-  visitingMetricAmtAvg?: number,
-  visitingMetricAmt: number,
-  visitingAllowedMetricRank: number,
-  visitingAllowedMetricAmtAvg?: number,
-  visitingAllowedMetricAmt: number,
-  homeMetricRank: number,
-  homeMetricAmtAvg?: number,
-  homeMetricAmt: number,
-  homeAllowedMetricRank: number,
-  homeAllowedMetricAmtAvg?: number,
-  homeAllowedMetricAmt: number,
+function genTableForMetric(metric: SchedulePredictionAggregationMetric): JSX.Element {
+  return (
+    <table className={styles['table']} key={`table-${metric.schedulePredictionId}`}>
+      <tbody>
+        {genRowsForMetric(metric)}
+      </tbody>
+    </table>
+  );
 }
 
-function genRowsForMetric({
-  metricName,
-  allowedMetricName,
-  visitingMetricRank,
-  visitingMetricAmtAvg,
-  visitingMetricAmt,
-  visitingAllowedMetricRank,
-  visitingAllowedMetricAmtAvg,
-  visitingAllowedMetricAmt,
-  homeMetricRank,
-  homeMetricAmtAvg,
-  homeMetricAmt,
-  homeAllowedMetricRank,
-  homeAllowedMetricAmtAvg,
-  homeAllowedMetricAmt,
-}: GenRowsForMetricsParams): JSX.Element[] {
+function genRowsForMetric(metric: SchedulePredictionAggregationMetric): JSX.Element[] {
+  const isAllowableMetric: boolean = metric.allowedMetricName !== null;
+  if (isAllowableMetric) {
+    return genRowsForAllowableMetric(metric);
+  }
+
+  const {
+    metricName,
+    homeTeamMetricRank,
+    homeTeamMetricAmt,
+    homeTeamMetricAvg,
+    visitingTeamMetricRank,
+    visitingTeamMetricAmt,
+    visitingTeamMetricAvg,
+  } = metric;
+
   const titleTr: JSX.Element = (
     <tr className={`${styles['tr']}`}>
       <td className={`${styles['td']} ${styles['title']} ${styles['visitor-td']}`}>
@@ -145,104 +51,180 @@ function genRowsForMetric({
       <td className={styles['mid-td']}>
       </td>
       <td className={`${styles['td']} ${styles['title']} ${styles['home-td']}`}>
-        {allowedMetricName}
+        {metricName}
       </td>
     </tr>
   );
   const rankTr: JSX.Element = (
     <tr className={`${styles['tr']}`}>
       <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        #{visitingMetricRank} 
+        #{visitingTeamMetricRank} 
       </td>
       <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
         Rank
       </td>
       <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        #{homeAllowedMetricRank}
+        #{homeTeamMetricRank}
       </td>
     </tr>
   );
   const totalTr: JSX.Element = (
     <tr className={`${styles['tr']}`}>
       <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        {visitingMetricAmt} 
+        {visitingTeamMetricAmt} 
       </td>
       <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
         Total
       </td>
       <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        {homeAllowedMetricAmt}
+        {homeTeamMetricAmt}
       </td>
     </tr>
   );
-  const avgTr: JSX.Element = (typeof(visitingMetricAmtAvg) !== "undefined" &&  typeof(homeAllowedMetricAmtAvg) !== "undefined")
-  ? (
+  const avgTr: JSX.Element = (
     <tr className={`${styles['tr']}`}>
       <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        {visitingMetricAmtAvg.toFixed(1)}
+        {visitingTeamMetricAvg.toFixed(1)}
       </td>
       <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
         Avg
       </td>
       <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        {homeAllowedMetricAmtAvg.toFixed(1)}
+        {homeTeamMetricAvg.toFixed(1)}
       </td>
     </tr>
-  )
-  : <></>;
-  const allowedTitleTr: JSX.Element = (
+  );
+  return [
+    titleTr,
+    rankTr,
+    totalTr,
+    avgTr
+  ];
+}
+
+function genRowsForAllowableMetric(metric: SchedulePredictionAggregationMetric): JSX.Element[] {
+  const {
+    metricName,
+    homeTeamMetricRank,
+    homeTeamMetricAmt,
+    homeTeamMetricAvg,
+    visitingTeamMetricRank,
+    visitingTeamMetricAmt,
+    visitingTeamMetricAvg,
+    allowedMetricName,
+    allowedHomeTeamMetricRank,
+    allowedHomeTeamMetricAmt,
+    allowedHomeTeamMetricAvg,
+    allowedVisitingTeamMetricRank,
+    allowedVisitingTeamMetricAmt,
+    allowedVisitingTeamMetricAvg,
+  } = metric;
+
+  const titleTr: JSX.Element = (
     <tr className={`${styles['tr']}`}>
       <td className={`${styles['td']} ${styles['title']} ${styles['visitor-td']}`}>
-        {allowedMetricName}
+        {formatMetricName(metricName)}
       </td>
       <td className={styles['mid-td']}>
       </td>
       <td className={`${styles['td']} ${styles['title']} ${styles['home-td']}`}>
-        {metricName}
+        {formatMetricName(allowedMetricName ?? "")}
+      </td>
+    </tr>
+  );
+  const allowedTitleTr: JSX.Element = (
+    <tr className={`${styles['tr']}`}>
+      <td className={`${styles['td']} ${styles['title']} ${styles['visitor-td']}`}>
+        {formatMetricName(allowedMetricName ?? "")}
+      </td>
+      <td className={styles['mid-td']}>
+      </td>
+      <td className={`${styles['td']} ${styles['title']} ${styles['home-td']}`}>
+        {formatMetricName(metricName)}
+      </td>
+    </tr>
+  );
+
+  const rankTr: JSX.Element = (
+    <tr className={`${styles['tr']}`}>
+      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
+        #{visitingTeamMetricRank} 
+      </td>
+      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
+        Rank
+      </td>
+      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
+        #{allowedHomeTeamMetricRank}
       </td>
     </tr>
   );
   const allowedRankTr: JSX.Element = (
     <tr className={`${styles['tr']}`}>
       <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        #{visitingAllowedMetricRank} 
+        #{allowedVisitingTeamMetricRank} 
       </td>
       <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
         Rank
       </td>
       <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        #{homeMetricRank}
+        #{homeTeamMetricRank}
+      </td>
+    </tr>
+  );
+
+  const totalTr: JSX.Element = (
+    <tr className={`${styles['tr']}`}>
+      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
+        {visitingTeamMetricAmt} 
+      </td>
+      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
+        Total
+      </td>
+      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
+        {allowedHomeTeamMetricAmt}
       </td>
     </tr>
   );
   const allowedTotalTr: JSX.Element = (
     <tr className={`${styles['tr']}`}>
       <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        {visitingAllowedMetricAmt} 
+        {allowedVisitingTeamMetricAmt} 
       </td>
       <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
         Total
       </td>
       <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        {homeMetricAmt}
+        {homeTeamMetricAmt}
       </td>
     </tr>
   );
-  const allowedAvgTr: JSX.Element = (typeof(visitingAllowedMetricAmtAvg) !== "undefined" &&  typeof(homeMetricAmtAvg) !== "undefined")
-  ? (
+
+  const avgTr: JSX.Element = (
     <tr className={`${styles['tr']}`}>
       <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        {visitingAllowedMetricAmtAvg.toFixed(1)}
+        {visitingTeamMetricAvg.toFixed(1)}
       </td>
       <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
         Avg
       </td>
       <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        {homeMetricAmtAvg.toFixed(1)}
+        {(allowedHomeTeamMetricAvg ?? 0).toFixed(1)}
       </td>
     </tr>
-  )
-  : <></>;
+  );
+  const allowedAvgTr: JSX.Element = (
+    <tr className={`${styles['tr']}`}>
+      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
+        {(allowedVisitingTeamMetricAvg ?? 0).toFixed(1)}
+      </td>
+      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
+        Avg
+      </td>
+      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
+        {homeTeamMetricAvg.toFixed(1)}
+      </td>
+    </tr>
+  );
 
   return [
     titleTr,
@@ -254,4 +236,11 @@ function genRowsForMetric({
     allowedTotalTr,
     allowedAvgTr
   ];
+}
+
+// Metric names are in CamelCase which is not human-friendly
+function formatMetricName(name: string) {
+  const result: string = name.replace( /([A-Z])/g, " $1" );
+  const finalResult: string = result.charAt(0).toUpperCase() + result.slice(1);
+  return finalResult.replace("Amt", "");
 }
