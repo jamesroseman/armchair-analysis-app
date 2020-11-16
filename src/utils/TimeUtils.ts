@@ -103,7 +103,7 @@ export class TimeUtils {
         return "Dec.";
       }
       default: {
-        return "UnkownAbbrMonth";
+        return "UnknownAbbrMonth";
       }
     }
   }

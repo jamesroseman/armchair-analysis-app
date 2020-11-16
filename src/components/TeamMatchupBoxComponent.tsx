@@ -15,6 +15,7 @@ type TeamMatchupBoxComponentProps = {
 
 export default ({ schedulePrediction, cardClassName, shouldDisplayMoneylineAsDecimal }: TeamMatchupBoxComponentProps) => {
   const { 
+    scheduleId,
     visitingTeamName,
     visitingTeamEloRatingRank,
     visitingTeamEloWinExp,
@@ -41,42 +42,44 @@ export default ({ schedulePrediction, cardClassName, shouldDisplayMoneylineAsDec
   }
 
   return (
-    <div key={`teamMatchupBox-${schedulePrediction.scheduleId}`}>
-      <table key={`teamMatchupBox-table-header-${schedulePrediction.scheduleId}`} className={styles['game-header']}>
-        <thead>
-          {renderTableHeader(isScheduled, schedulePrediction)}
-        </thead>
-      </table>
-      <table 
-        key={`teamMatchupBox-table-contents-${schedulePrediction.scheduleId}`} 
-        className={`${styles['game-body']} ${cardClassName ?? ""}`}
-      >
-        <tbody>
-          {renderTableRowForTeam(
-            visitingTeamName,
-            visitingTeamEloRatingRank,
-            visitingTeamEloWinExp,
-            isScheduled,
-            didVisitorWin,
-            visitorPointSpreadNo,
-            game?.pointsScoredVisitorAmt,
-            bettingOdds?.visitingMoneylineOdds,
-            shouldDisplayMoneylineAsDecimal
-          )}
-          {renderTableRowForTeam(
-            homeTeamName,
-            homeTeamEloRatingRank,
-            homeTeamEloWinExp,
-            isScheduled,
-            didHomeWin,
-            homePointSpreadNo,
-            game?.pointsScoredHomeAmt,
-            bettingOdds?.homeMoneylineOdds,
-            shouldDisplayMoneylineAsDecimal
-          )}
-        </tbody>
-      </table>
-    </div>
+    <a href={`/s/${scheduleId}`} target="_blank" rel="noopener noreferrer">
+      <div key={`teamMatchupBox-${schedulePrediction.scheduleId}`}>
+        <table key={`teamMatchupBox-table-header-${schedulePrediction.scheduleId}`} className={styles['game-header']}>
+          <thead>
+            {renderTableHeader(isScheduled, schedulePrediction)}
+          </thead>
+        </table>
+        <table 
+          key={`teamMatchupBox-table-contents-${schedulePrediction.scheduleId}`} 
+          className={`${styles['game-body']} ${cardClassName ?? ""}`}
+        >
+          <tbody>
+            {renderTableRowForTeam(
+              visitingTeamName,
+              visitingTeamEloRatingRank,
+              visitingTeamEloWinExp,
+              isScheduled,
+              didVisitorWin,
+              visitorPointSpreadNo,
+              game?.pointsScoredVisitorAmt,
+              bettingOdds?.visitingMoneylineOdds,
+              shouldDisplayMoneylineAsDecimal
+            )}
+            {renderTableRowForTeam(
+              homeTeamName,
+              homeTeamEloRatingRank,
+              homeTeamEloWinExp,
+              isScheduled,
+              didHomeWin,
+              homePointSpreadNo,
+              game?.pointsScoredHomeAmt,
+              bettingOdds?.homeMoneylineOdds,
+              shouldDisplayMoneylineAsDecimal
+            )}
+          </tbody>
+        </table>
+      </div>
+    </a>
   );
 };
 
@@ -131,7 +134,7 @@ function renderTableRowForTeam(
         <TeamLogoImageComponent teamName={teamName} height={24} />
       </td>
       <td className={`${styles['td']} ${styles['team']}`}>
-        {TeamNameUtils.getPrintableNameFromTeamName(teamName)}
+        {TeamNameUtils.getShortNameFromTeamName(teamName)}
         <div className={styles['team-rank']}>
           #{teamRank}
         </div>

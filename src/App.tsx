@@ -8,6 +8,11 @@ import {
 import styles from './App.module.css';
 
 import AllSchedulePredictionsRenderer from './renderers/AllSchedulePredictionsRenderer';
+import SchedulePredictionRenderer from './renderers/SchedulePredictionRenderer';
+
+type SchedulePredictionDashboardParams = {
+  scheduleId: string,
+}
 
 function App() {
   return (
@@ -17,7 +22,7 @@ function App() {
           <Route exact path='/'>
             <AllSchedulePredictionsRenderer />
           </Route>
-          <Route path='/sp/:schedulePredictionId'>
+          <Route path='/s/:scheduleId'>
             <SchedulePredictionDashboardContainerRoute />
           </Route>
         </Switch>
@@ -27,8 +32,8 @@ function App() {
 }
 
 function SchedulePredictionDashboardContainerRoute() {
-  let { schedulePredictionId } = useParams();
-  return (<div>{schedulePredictionId}</div>);
+  const { scheduleId } = useParams<SchedulePredictionDashboardParams>();
+  return <SchedulePredictionRenderer scheduleId={scheduleId} />;
 }
 
 export default App;

@@ -24,13 +24,22 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
   const [confidenceLimit, setConfidenceLimit] = useState(DEFAULT_CONFIDENCE_LIMIT);
   const [stake, setStake] = useState(DEFAULT_STAKE);
   const [shouldOnlyDisplayConfidentPredictions, setShouldOnlyDisplayConfidentPredictions] = useState(false);
+  const [shouldOnlyDisplayAgainstSpreadPredictions, setShouldOnlyDisplayAgainstSpreadPredictions] = useState(false);
   const [shouldDisplayMoneylineAsDecimal, setShouldDisplayMoneylineAsDecimal] = useState(true);
 
   const uniquePredictions: SchedulePrediction[] = SchedulePredictionUtils.getUniqueSchedulePredictions(schedulePredictions);
   const confidentPredictions: SchedulePrediction[] = uniquePredictions.filter((schedulePrediction: SchedulePrediction) => {
     return SchedulePredictionUtils.isPredictionConfident(schedulePrediction, confidenceLimit / 100);
   });
-  const predictions = shouldOnlyDisplayConfidentPredictions ? confidentPredictions : uniquePredictions;
+  const againstSpreadPredictions: SchedulePrediction[] = uniquePredictions.filter((schedulePrediction: SchedulePrediction) => {
+    return SchedulePredictionUtils.isPredictionAgainstTheSpread(schedulePrediction);
+  });
+  const confidentAgainstSpreadPredictions: SchedulePrediction[] = againstSpreadPredictions.filter((schedulePrediction: SchedulePrediction) => {
+    return SchedulePredictionUtils.isPredictionConfident(schedulePrediction, confidenceLimit / 100);
+  });
+  const predictions = shouldOnlyDisplayConfidentPredictions 
+  ? (shouldOnlyDisplayAgainstSpreadPredictions ? confidentAgainstSpreadPredictions : confidentPredictions)
+  : (shouldOnlyDisplayAgainstSpreadPredictions ? againstSpreadPredictions : uniquePredictions);
 
   const weekNumberToSchedulePredictionsMap: WeekNumberToSchedulePredictionsMap = 
     SchedulePredictionUtils.getWeekNumberToSchedulePredictionsMap(predictions);
@@ -81,6 +90,10 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
 
   const handleDisplayConfidentPredictionsOnlyToggle = (event: any) => {
     setShouldOnlyDisplayConfidentPredictions(event.target.checked);
+  }
+
+  const handleDisplayAgainstSpreadPredictionsOnlyToggle = (event: any) => {
+    setShouldOnlyDisplayAgainstSpreadPredictions(event.target.checked);
   }
 
   const handleDisplayMoneylineFractionToggle = (event: any) => {
@@ -141,6 +154,14 @@ export default ({ schedulePredictions }: AllSchedulePredictionsContainerProps) =
         </div>
         <div className={styles['toggle-checkbox']}>
           <input type="checkbox" checked={shouldOnlyDisplayConfidentPredictions} onChange={handleDisplayConfidentPredictionsOnlyToggle} />
+        </div>
+      </div>
+      <div className={styles['toggle']}>
+        <div className={styles['toggle-title']}>
+          Only Display Against-the-Spread Predictions?
+        </div>
+        <div className={styles['toggle-checkbox']}>
+          <input type="checkbox" checked={shouldOnlyDisplayAgainstSpreadPredictions} onChange={handleDisplayAgainstSpreadPredictionsOnlyToggle} />
         </div>
       </div>
       <div className={styles['toggle']}>

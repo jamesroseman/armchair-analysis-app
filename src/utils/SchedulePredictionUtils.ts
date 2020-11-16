@@ -82,15 +82,23 @@ export class SchedulePredictionUtils {
   public static isPredictionAgainstTheSpread(
     schedulePrediction: SchedulePrediction
   ): boolean {
-    const { visitingTeamEloWinExp, homeTeamEloWinExp, game } = schedulePrediction;
-    if (game === null || typeof(game) === "undefined") {
-      return false;
+    const { visitingTeamEloWinExp, homeTeamEloWinExp, bettingOdds, game } = schedulePrediction
+    // First, try based on the scraped betting odds.
+    if (bettingOdds !== null && typeof(bettingOdds) !== "undefined") {
+      const { visitingMoneylineOdds } = bettingOdds;
+      const visitingMoneylineWinExp: number = (1 / visitingMoneylineOdds);
+      return (visitingMoneylineWinExp > 0.5 && visitingTeamEloWinExp < 0.5)
+          || (visitingMoneylineWinExp < 0.5 && visitingTeamEloWinExp > 0.5);
     }
-    const { visitorPointSpreadNo } = game;
-    const didPredictVisitingWin: boolean = visitingTeamEloWinExp > 0.5;
-    const didPredictHomeWin: boolean = homeTeamEloWinExp > 0.5;
-    // A negative point spread indicates the team was favored to win.
-    return (visitorPointSpreadNo < 0 && didPredictHomeWin) || (visitorPointSpreadNo > 0 && didPredictVisitingWin);
+    // Then, try the game object (which only exists in occurred games)
+    if (game !== null && typeof(game) !== "undefined") {
+      const { visitorPointSpreadNo } = game;
+      const didPredictVisitingWin: boolean = visitingTeamEloWinExp > 0.5;
+      const didPredictHomeWin: boolean = homeTeamEloWinExp > 0.5;
+      // A negative point spread indicates the team was favored to win.
+      return (visitorPointSpreadNo < 0 && didPredictHomeWin) || (visitorPointSpreadNo > 0 && didPredictVisitingWin);
+    }
+    return false;
   }
 
   /**

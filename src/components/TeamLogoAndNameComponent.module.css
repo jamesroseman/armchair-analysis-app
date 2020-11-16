@@ -1,0 +1,17 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.image {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.team-name {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+}

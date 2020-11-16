@@ -1,9 +1,11 @@
 .App {
+  height: 100%;
   width: 90%;
   min-width: 550px;
 
   margin-left: auto;
   margin-right: auto;
+  padding-bottom: 50px;
 
   font-family: AtlasGrotesk, "Helvetica Neue", Helvetica,Arial, sans-serif;
 }
