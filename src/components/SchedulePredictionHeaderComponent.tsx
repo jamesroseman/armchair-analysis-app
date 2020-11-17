@@ -1,5 +1,8 @@
 import React, { CSSProperties } from 'react';
+import { SchedulePredictionAggregationMetric } from '../types/SchedulePredictionAggregationMetricTypes';
 import { SchedulePrediction } from '../types/SchedulePredictionTypes';
+import { TeamRecord } from '../types/TeamTypes';
+import { SchedulePredictionAggregationMetricUtils } from '../utils/SchedulePredictionAggregationMetricUtils';
 import { TeamNameUtils } from '../utils/TeamNameUtils';
 import { TimeUtils } from '../utils/TimeUtils';
 import styles from './SchedulePredictionHeaderComponent.module.css';
@@ -17,6 +20,7 @@ export default ({ schedulePrediction }: SchedulePredictionHeaderComponentProps) 
     homeTeamName,
     date,
     dayOfWeek,
+    metrics
   } = schedulePrediction;
   const dateStr: string = TimeUtils.getPrintableDateFromDateAndDayOfWeek(
     date,
@@ -26,6 +30,9 @@ export default ({ schedulePrediction }: SchedulePredictionHeaderComponentProps) 
   const timeStr: string = TimeUtils.getPrintableTimeFromDate(
     date,
   );
+
+  const homeRecord: TeamRecord | undefined = SchedulePredictionAggregationMetricUtils.getHomeRecordFromMetrics(metrics ?? []);
+  const visitingRecord: TeamRecord | undefined = SchedulePredictionAggregationMetricUtils.getVisitingRecordFromMetrics(metrics ?? []);
 
   const visitingTeamPrimaryColor: string = TeamNameUtils.getPrimaryColorFromTeamName(visitingTeamName);
   const homeTeamPrimaryColor: string = TeamNameUtils.getPrimaryColorFromTeamName(homeTeamName);
@@ -54,7 +61,7 @@ export default ({ schedulePrediction }: SchedulePredictionHeaderComponentProps) 
         className={`${styles['team-logo-and-name']} ${styles['visiting-team']}`}
         style={visitingTeamProperties}
       >
-        <TeamLogoAndNameComponent teamName={visitingTeamName} />
+        <TeamLogoAndNameComponent teamName={visitingTeamName} record={visitingRecord} />
       </div>
 
       <div 
@@ -75,7 +82,7 @@ export default ({ schedulePrediction }: SchedulePredictionHeaderComponentProps) 
         className={`${styles['team-logo-and-name']} ${styles['home-team']}`}
         style={homeTeamProperties}
       >
-        <TeamLogoAndNameComponent teamName={homeTeamName} />
+        <TeamLogoAndNameComponent teamName={homeTeamName} record={homeRecord} />
       </div>
     </div>
   );

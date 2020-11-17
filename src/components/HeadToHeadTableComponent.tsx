@@ -18,6 +18,20 @@ export default ({ schedulePrediction }: HeadToHeadTableComponentProps) => {
 }
 
 function genTableForMetric(metric: SchedulePredictionAggregationMetric): JSX.Element {
+  // A metric is considered significant if either team is in the top-2, or one team is in the top-5
+  // and the other is in the bottom-5 allowed.
+  const {
+    homeTeamMetricRank,
+    visitingTeamMetricRank,
+    allowedHomeTeamMetricRank,
+    allowedVisitingTeamMetricRank
+  } = metric;
+  const isTop3Metric: boolean = homeTeamMetricRank < 2 || visitingTeamMetricRank < 2;
+  const isBot5HomeMetric: boolean = (visitingTeamMetricRank < 5 && (allowedHomeTeamMetricRank ?? 0) > 27);
+  const isBot5VisitingMetric: boolean = (homeTeamMetricRank < 5 && (allowedVisitingTeamMetricRank ?? 0) > 27);
+  if (!isTop3Metric && !isBot5HomeMetric && !isBot5VisitingMetric) {
+    return <></>;
+  }
   return (
     <table className={styles['table']} key={`table-${metric.schedulePredictionId}`}>
       <tbody>

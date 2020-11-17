@@ -59,13 +59,13 @@ html {
 }
 
 .date-text {
-  font-size: 25px;
+  font-size: 18px;
   font-weight: 600;
   margin-bottom: 8px;
 }
 
 .time-text {
-  font-size: 20px;
+  font-size: 14px;
 }
 
 .team-logo-and-name {
@@ -73,8 +73,8 @@ html {
   flex-direction: row;
   justify-content: center;
 
-  min-width: 245px;
-  width: 50%;
+  min-width: 350px;
+  width: 60%;
 }
 
 .visiting-team {
