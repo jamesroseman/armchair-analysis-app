@@ -1,4 +1,5 @@
 .App {
+  background: #fff;
   height: 100%;
   width: 90%;
   min-width: 550px;
@@ -8,4 +9,8 @@
   padding-bottom: 50px;
 
   font-family: AtlasGrotesk, "Helvetica Neue", Helvetica,Arial, sans-serif;
+}
+
+html, body, #app, #app>div {
+  height: 100%
 }

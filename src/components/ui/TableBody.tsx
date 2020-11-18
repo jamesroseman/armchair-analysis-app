@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import styles from './TableBody.module.css';
 
 export type TableBodyProps = {
 
@@ -6,7 +7,7 @@ export type TableBodyProps = {
 
 const TableBody: FunctionComponent<TableBodyProps> = ({ children }) => {
   return (
-    <tbody>
+    <tbody className={styles['tbody']}>
       {children}
     </tbody>
   );

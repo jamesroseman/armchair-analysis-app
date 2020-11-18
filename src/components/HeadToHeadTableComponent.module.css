@@ -11,11 +11,11 @@
   display: flex;
   flex-direction: row;
   text-align: left;
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
 .toggle:first-child {
-  margin-top: 0;
+  margin-top: 4px;
 }
 
 .toggle-title {
@@ -30,7 +30,19 @@
   margin-right: 15px;
 }
 
+.configuration {
+  display: flex;
+  flex-direction: column;
+  margin-top: 25px;
+  margin-bottom: 10px;
+
+  width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .head-to-head {
+  margin-top: 35px;
   margin-left: auto;
   margin-right: auto;
   

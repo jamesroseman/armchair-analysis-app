@@ -1,6 +1,13 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import { SchedulePredictionsAccuracy } from "../types/SchedulePredictionTypes"
-import styles from "./PredictionAccuracyResultsComponent.module.css";
+import Card from "./ui/Card";
+import SliderInput from "./ui/SliderInput";
+import Table from "./ui/Table";
+import TableBody from "./ui/TableBody";
+import TableHead from "./ui/TableHead";
+import TableRow from "./ui/TableRow";
+import TableTd, { TdType } from "./ui/TableTd";
+import TableTh, { ThType } from "./ui/TableTh";
 
 type PredictionAccuracyResultsComponentProps = {
   accuracy: SchedulePredictionsAccuracy,
@@ -21,53 +28,44 @@ export default ({ accuracy, confidenceLimit, handleConfidenceLimitSliderEvent }:
     againstTheSpreadPredictionsGuessRate
   } = accuracy;
 
+  const tdProperties: CSSProperties = { width: 150, height: 30 };
+  const confidenceLimitProperties: CSSProperties = { ...tdProperties, backgroundColor: 'rgb(204, 226, 221)' };
+
   return (
-    <div>
-      <div>
-        <div className={styles['results-card']}>
-          <table className={styles['results-header']}>
-            <thead>
-              <tr className={styles['tr']}>
-                <th className={styles['title']}></th>
-                <th className={styles['th']}>Correct Predictions</th>
-                <th className={styles['th']}>Predictions</th>
-                <th className={styles['th']}>Guess Rate</th>
-                <th className={styles['th']}>Confidence Limit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className={styles['tr']}>
-                <td className={`${styles['td']} ${styles['title']}`}>Predictions</td>
-                <td className={`${styles['td']} ${styles['data']}`}>{correctPredictionsAmt}</td>
-                <td className={`${styles['td']} ${styles['data']}`}>{predictionsAmt}</td>
-                <td className={`${styles['td']} ${styles['data']}`}>{(predictionsGuessRate * 100).toFixed(1)}%</td>
-                <td className={`${styles['td']} ${styles['data']} ${styles['confidence-limit']}`}>{confidenceLimit.toFixed(1)}%</td>
-              </tr>
-              <tr className={styles['tr']}>
-                <td className={`${styles['td']} ${styles['title']}`}>Confident Predictions</td>
-                <td className={`${styles['td']} ${styles['data']}`}>{correctConfidentPredictionsAmt}</td>
-                <td className={`${styles['td']} ${styles['data']}`}>{confidentPredictionsAmt}</td>
-                <td className={`${styles['td']} ${styles['data']}`}>{(confidentPredictionsGuessRate * 100).toFixed(1)}%</td>
-              </tr>
-              <tr className={styles['tr']}>
-                <td className={`${styles['td']} ${styles['title']}`}>Against the Spread Predictions</td>
-                <td className={`${styles['td']} ${styles['data']}`}>{correctAgainstTheSpreadPredictionsAmt}</td>
-                <td className={`${styles['td']} ${styles['data']}`}>{againstTheSpreadPredictionsAmt}</td>
-                <td className={`${styles['td']} ${styles['data']}`}>{(againstTheSpreadPredictionsGuessRate * 100).toFixed(1)}%</td>
-              </tr>
-            </tbody>
-          </table>
-          <div className={styles['confidence-limit-slider']} >
-            <input 
-              type="range" 
-              min="530" 
-              max="850" 
-              value={confidenceLimit * 10} 
-              onChange={handleConfidenceLimitSliderEvent} 
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+    <Card>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableTh></TableTh>
+            <TableTh type={ThType.Number}>Correct Predictions</TableTh>
+            <TableTh type={ThType.Number}>Predictions</TableTh>
+            <TableTh type={ThType.Number}>Guess Rate</TableTh>
+            <TableTh type={ThType.Number}>Confidence Limit</TableTh>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableTd type={TdType.Title}>Predictions</TableTd>
+            <TableTd properties={tdProperties} type={TdType.Number}>{correctPredictionsAmt}</TableTd>
+            <TableTd properties={tdProperties} type={TdType.Number}>{predictionsAmt}</TableTd>
+            <TableTd properties={tdProperties} type={TdType.Number}>{(predictionsGuessRate * 100).toFixed(1)}%</TableTd>
+            <TableTd properties={confidenceLimitProperties} type={TdType.Number}>{confidenceLimit.toFixed(1)}%</TableTd>
+          </TableRow>
+          <TableRow>
+            <TableTd type={TdType.Title}>Confident Predictions</TableTd>
+            <TableTd properties={tdProperties} type={TdType.Number}>{correctConfidentPredictionsAmt}</TableTd>
+            <TableTd properties={tdProperties} type={TdType.Number}>{confidentPredictionsAmt}</TableTd>
+            <TableTd properties={tdProperties} type={TdType.Number}>{(confidentPredictionsGuessRate * 100).toFixed(1)}%</TableTd>
+          </TableRow>
+          <TableRow>
+            <TableTd type={TdType.Title}>Against the Spread Predictions</TableTd>
+            <TableTd properties={tdProperties} type={TdType.Number}>{correctAgainstTheSpreadPredictionsAmt}</TableTd>
+            <TableTd properties={tdProperties} type={TdType.Number}>{againstTheSpreadPredictionsAmt}</TableTd>
+            <TableTd properties={tdProperties} type={TdType.Number}>{(againstTheSpreadPredictionsGuessRate * 100).toFixed(1)}%</TableTd>
+          </TableRow>
+        </TableBody>
+      </Table>
+      <SliderInput min={530} max={850} value={confidenceLimit * 10} onChange={handleConfidenceLimitSliderEvent} />
+    </Card>
   );
 }

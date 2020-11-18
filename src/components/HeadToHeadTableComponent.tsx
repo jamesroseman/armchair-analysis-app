@@ -1,4 +1,4 @@
-import React, { useState, CSSProperties } from 'react';
+import React, { useState, CSSProperties, ChangeEvent } from 'react';
 import { SchedulePrediction } from '../types/SchedulePredictionTypes';
 import { SchedulePredictionAggregationMetric } from '../types/SchedulePredictionAggregationMetricTypes';
 import styles from './HeadToHeadTableComponent.module.css';
@@ -16,6 +16,7 @@ import { SchedulePredictionAggregationMetricUtils } from '../utils/SchedulePredi
 import { HIGHLIGHT_COLOR, INCORRECT_COLOR } from './CSSConstants';
 import { TeamNameUtils } from '../utils/TeamNameUtils';
 import tinycolor from 'tinycolor2';
+import TextInput from './ui/TextInput';
 
 type HeadToHeadTableComponentProps = {
   schedulePrediction: SchedulePrediction
@@ -33,45 +34,67 @@ export default ({
   } = schedulePrediction;
   const [shouldOnlyDisplayUnevenMetrics, setShouldOnlyDisplayUnevenMetrics] = useState(false);
   const [shouldOnlyDisplaySignificantMetrics, setShouldOnlyDisplaySignificantMetrics] = useState(false);
+  const [filter, setFilter] = useState('');
+
+  console.log(filter);
+
+  const filteredMetrics: SchedulePredictionAggregationMetric[] = (metrics ?? [])
+  .filter((metric: SchedulePredictionAggregationMetric) => filter === '' || formatMetricName(metric.metricName).includes(filter));
+  const metricTables: JSX.Element[] = filteredMetrics.map(
+    (metric: SchedulePredictionAggregationMetric) => genTableForMetric(
+      homeTeamName,
+      homeTeamEloRatingRank,
+      visitingTeamName,
+      visitingTeamEloRatingRank,
+      metric,
+      shouldOnlyDisplayUnevenMetrics,
+      shouldOnlyDisplaySignificantMetrics
+    ));
 
   return (
     <div className={styles['root']}>
-      <div className={styles['toggles']}>
-        <div className={styles['toggle']}>
-          <div className={styles['toggle-title']}>
-            Only Display Uneven Metrics?
+  
+      <div className={styles['configuration']}>
+        <Card>
+          <TextInput 
+            value={filter}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setFilter(event.target.value)}
+            placeholder={'Filter...'}
+            properties={{
+              width: 300,
+              marginBottom: 10
+            }}
+          />
+          <div className={styles['toggles']}>
+            <div className={styles['toggle']}>
+              <div className={styles['toggle-title']}>
+                Only Display Uneven Metrics?
+              </div>
+              <div className={styles['toggle-checkbox']}>
+                <input 
+                  type="checkbox" 
+                  checked={shouldOnlyDisplayUnevenMetrics} 
+                  onChange={() => setShouldOnlyDisplayUnevenMetrics(!shouldOnlyDisplayUnevenMetrics)} 
+                />
+              </div>
+            </div>
+            <div className={styles['toggle']}>
+              <div className={styles['toggle-title']}>
+                Only Display Significant Metrics?
+              </div>
+              <div className={styles['toggle-checkbox']}>
+                <input 
+                  type="checkbox" 
+                  checked={shouldOnlyDisplaySignificantMetrics} 
+                  onChange={() => setShouldOnlyDisplaySignificantMetrics(!shouldOnlyDisplaySignificantMetrics)} 
+                />
+              </div>
+            </div>
           </div>
-          <div className={styles['toggle-checkbox']}>
-            <input 
-              type="checkbox" 
-              checked={shouldOnlyDisplayUnevenMetrics} 
-              onChange={() => setShouldOnlyDisplayUnevenMetrics(!shouldOnlyDisplayUnevenMetrics)} 
-            />
-          </div>
-        </div>
-        <div className={styles['toggle']}>
-          <div className={styles['toggle-title']}>
-            Only Display Significant Metrics?
-          </div>
-          <div className={styles['toggle-checkbox']}>
-            <input 
-              type="checkbox" 
-              checked={shouldOnlyDisplaySignificantMetrics} 
-              onChange={() => setShouldOnlyDisplaySignificantMetrics(!shouldOnlyDisplaySignificantMetrics)} 
-            />
-          </div>
-        </div>
+        </Card>
       </div>
       <div className={styles['head-to-head']}>
-        {metrics?.map((metric: SchedulePredictionAggregationMetric) => genTableForMetric(
-          homeTeamName,
-          homeTeamEloRatingRank,
-          visitingTeamName,
-          visitingTeamEloRatingRank,
-          metric,
-          shouldOnlyDisplayUnevenMetrics,
-          shouldOnlyDisplaySignificantMetrics
-        ))}
+        {metricTables}
       </div>
     </div>
   );
@@ -122,6 +145,7 @@ function genTableForMetric(
 
   return (
     <Card 
+      key={metricName}
       title={formatMetricName(metricName)}
       properties={cardProperties}
       bodyProperties={cardBodyProperties}
