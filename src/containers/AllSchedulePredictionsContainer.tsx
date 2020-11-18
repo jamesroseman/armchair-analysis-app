@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import PredictionAccuracyResultsComponent from '../components/PredictionAccuracyResultsComponent';
 import BettingSimulationInlineComponent from '../components/BettingSimulationInlineComponent';
 import TeamMatchupBoxComponent from '../components/TeamMatchupBoxComponent';
@@ -231,21 +231,33 @@ function renderSchedulePredictionRow(
   const shouldHighlight: boolean = SchedulePredictionUtils.isPredictionConfident(schedulePrediction, confidenceLimit / 100);
   const hasOccurred: boolean = SchedulePredictionUtils.hasPredictionOccurred(schedulePrediction);
   const isCorrect: boolean = SchedulePredictionUtils.isPredictionCorrect(schedulePrediction);
-  const cardClassName: string = shouldHighlight 
-  ? (
-    hasOccurred 
-    ? (isCorrect ? styles['matchup-box-card-highlight-correct'] : styles['matchup-box-card-highlight-incorrect'] )
-    : styles['matchup-box-card-highlight']
-  )
-  : "";
+  const properties: CSSProperties = shouldHighlight
+  ? { outline: getPropertiesForHighlightedMatchupBox(hasOccurred, isCorrect) }
+  : {};
 
   return(
     <div key={`matchupbox-${schedulePrediction.scheduleId}`} className={styles['matchup-box']}>
       <TeamMatchupBoxComponent 
-        schedulePrediction={schedulePrediction} 
-        cardClassName={cardClassName}
+        schedulePrediction={schedulePrediction}
+        bodyProperties={properties}
         shouldDisplayMoneylineAsDecimal={shouldDisplayMoneylineAsDecimal}
       />
     </div>
   );
+}
+
+function getPropertiesForHighlightedMatchupBox(
+  hasOccurred: boolean,
+  isCorrect: boolean
+): string {
+  const highlightOutline: string = '1px solid rgb(221, 167, 123)';
+  const correctOutline: string = '1px solid rgb(8,188,188)';
+  const incorrectOutline: string = '1px solid rgb(244, 97, 151)';
+  if (hasOccurred && isCorrect) {
+    return correctOutline;
+  }
+  if (hasOccurred && !isCorrect) {
+    return incorrectOutline;
+  }
+  return highlightOutline;
 }

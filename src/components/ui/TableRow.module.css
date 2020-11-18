@@ -1,0 +1,7 @@
+.tr {
+  border-bottom: 2px solid #fff;
+}
+
+.tr:last-child {
+  border-bottom: 0px;
+}

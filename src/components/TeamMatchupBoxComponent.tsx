@@ -4,18 +4,29 @@ import { SchedulePrediction } from '../types/SchedulePredictionTypes';
 import { SchedulePredictionUtils } from '../utils/SchedulePredictionUtils';
 import { TeamNameUtils } from '../utils/TeamNameUtils';
 import { TimeUtils } from '../utils/TimeUtils';
+import InlineTeamNameWithRank from './InlineTeamNameWithRank';
 import TeamLogoImageComponent from './TeamLogoImageComponent';
 import styles from './TeamMatchupBoxComponent.module.css';
+import Card from './ui/Card';
+import Table from './ui/Table';
+import TableBody from './ui/TableBody';
+import TableRow from './ui/TableRow';
+import TableTd, { TdType } from './ui/TableTd';
 
 type TeamMatchupBoxComponentProps = {
   schedulePrediction: SchedulePrediction,
-  cardClassName?: string,
+  properties?: CSSProperties,
+  bodyProperties?: CSSProperties,
   shouldDisplayMoneylineAsDecimal?: boolean
 }
 
-export default ({ schedulePrediction, cardClassName, shouldDisplayMoneylineAsDecimal }: TeamMatchupBoxComponentProps) => {
+export default ({ 
+  schedulePrediction, 
+  properties, 
+  bodyProperties,
+  shouldDisplayMoneylineAsDecimal = true
+}: TeamMatchupBoxComponentProps) => {
   const { 
-    scheduleId,
     visitingTeamName,
     visitingTeamEloRatingRank,
     visitingTeamEloWinExp,
@@ -41,117 +52,99 @@ export default ({ schedulePrediction, cardClassName, shouldDisplayMoneylineAsDec
     : undefined;
   }
 
+  // Display 
+
+  const timeStr: string = TimeUtils.getPrintableTimeFromDate(schedulePrediction.date);
+  const visitingMoneylineStr: string = getMoneylineStr(bettingOdds?.visitingMoneylineOdds ?? 1, shouldDisplayMoneylineAsDecimal);
+  const homeMoneylineStr: string = getMoneylineStr(bettingOdds?.homeMoneylineOdds ?? 1, shouldDisplayMoneylineAsDecimal);
+
   return (
-    <a href={`/s/${scheduleId}`} target="_blank" rel="noopener noreferrer">
-      <div key={`teamMatchupBox-${schedulePrediction.scheduleId}`}>
-        <table key={`teamMatchupBox-table-header-${schedulePrediction.scheduleId}`} className={styles['game-header']}>
-          <thead>
-            {renderTableHeader(isScheduled, schedulePrediction)}
-          </thead>
-        </table>
-        <table 
-          key={`teamMatchupBox-table-contents-${schedulePrediction.scheduleId}`} 
-          className={`${styles['game-body']} ${cardClassName ?? ""}`}
-        >
-          <tbody>
-            {renderTableRowForTeam(
-              visitingTeamName,
-              visitingTeamEloRatingRank,
-              visitingTeamEloWinExp,
-              isScheduled,
-              didVisitorWin,
-              visitorPointSpreadNo,
-              game?.pointsScoredVisitorAmt,
-              bettingOdds?.visitingMoneylineOdds,
-              shouldDisplayMoneylineAsDecimal
-            )}
-            {renderTableRowForTeam(
-              homeTeamName,
-              homeTeamEloRatingRank,
-              homeTeamEloWinExp,
-              isScheduled,
-              didHomeWin,
-              homePointSpreadNo,
-              game?.pointsScoredHomeAmt,
-              bettingOdds?.homeMoneylineOdds,
-              shouldDisplayMoneylineAsDecimal
-            )}
-          </tbody>
-        </table>
-      </div>
-    </a>
+    <Card
+      properties={{ width: 350, ...properties }}
+      bodyProperties={bodyProperties}
+      title={isScheduled ? timeStr : "FINAL"}
+    >
+      <Table>
+        <TableBody>
+          {renderRowForTeam(
+            visitingTeamName, 
+            visitorPointSpreadNo, 
+            visitingTeamEloRatingRank, 
+            visitingTeamEloWinExp, 
+            visitingMoneylineStr,
+            isScheduled,
+            didVisitorWin,
+            game?.pointsScoredVisitorAmt,
+          )}
+          {renderRowForTeam(
+            homeTeamName, 
+            homePointSpreadNo, 
+            homeTeamEloRatingRank, 
+            homeTeamEloWinExp, 
+            homeMoneylineStr,
+            isScheduled,
+            didHomeWin,
+            game?.pointsScoredHomeAmt,
+          )}
+        </TableBody>
+      </Table>
+    </Card>
   );
 };
 
-function renderTableHeader(
-  isScheduled: boolean,
-  schedulePrediction: SchedulePrediction,
-): JSX.Element {
-  const timeStr: string = TimeUtils.getPrintableTimeFromDate(schedulePrediction.date);
-  const header: string = isScheduled ? timeStr : "FINAL";
-  return (
-    <tr className={styles['tr']}>
-      <th className={styles['th']}>
-        {header}
-      </th>
-    </tr>
-  )
+function getMoneylineStr(
+  moneylineDecimal: number,
+  shouldDisplayMoneylineAsDecimal: boolean
+): string {
+  if (shouldDisplayMoneylineAsDecimal) {
+    return moneylineDecimal.toFixed(2);
+  } else {
+    const moneylinePctg: number = (1 / moneylineDecimal) * 100;
+    return `${moneylinePctg.toFixed(2)}%`;
+  }
 }
 
-function renderTableRowForTeam(
+function renderRowForTeam(
   teamName: TeamName,
-  teamRank: number,
-  winExp: number,
+  teamPointSpreadNo: number | undefined,
+  teamEloRatingRank: number,
+  teamEloWinExp: number,
+  teamMoneylineStr: string,
   isScheduled: boolean,
   didWin: boolean,
-  pointSpread?: number,
-  pointsScored?: number,
-  moneylineOdds?: number,
-  shouldDisplayMoneylineAsDecimal: boolean = true
+  pointsScored?: number
 ): JSX.Element {
-  const winExpStr: string = `${(winExp * 100).toFixed(1)}%`;
-  const moneyLineWinExp: number = (1 / (moneylineOdds ?? 1)) * 100;
-  const moneylineWinExpStr: string = moneylineOdds ? `${moneyLineWinExp.toFixed(1)}%` : "";
-  const moneylineStr: string = shouldDisplayMoneylineAsDecimal 
-  ? moneylineOdds?.toFixed(2) ?? ""
-  : moneylineWinExpStr
-
-  const pointsScoredScheduledClassName: string = isScheduled 
-  ? styles['scheduled'] 
-  : styles['occurred']
-  const pointsScoredWinnerClassName: string = didWin 
-  ? styles['winner'] 
-  : styles['loser'];
-  const pointsScoredClassName: string = `${pointsScoredScheduledClassName} ${pointsScoredWinnerClassName}`;
-
-  const winExpStyle: CSSProperties = {
-    backgroundColor: getWinExpColor(winExp),
+  // CSS Properties for each cell
+  const pointSpreadProperties: CSSProperties = {
+    backgroundColor: '#fff',
+  }
+  const moneylineProperties: CSSProperties = {
+    backgroundColor: '#fff',
+    color: 'rgb(77, 114, 68)',
+  }
+  const winExpProperties: CSSProperties = {
+    backgroundColor: getWinExpColor(teamEloWinExp)
+  }
+  const pointsScoredProperties: CSSProperties = isScheduled
+  ? { content: '-' }
+  : { 
+    backgroundColor: '#fff',
+    textAlign: 'right'
   }
 
   return (
-    <tr className={`${styles['tr']} ${styles['game-team']}`}>
-      <td className={`${styles['td']} ${styles['logo']}`}>
-        <TeamLogoImageComponent teamName={teamName} height={24} />
-      </td>
-      <td className={`${styles['td']} ${styles['team']}`}>
-        {TeamNameUtils.getShortNameFromTeamName(teamName)}
-        <div className={styles['team-rank']}>
-          #{teamRank}
-        </div>
-      </td>
-      <td className={`${styles['td']} ${styles['point-spread']}`}>
-        {pointSpread ?? ""}
-      </td>
-      <td className={`${styles['td']} ${styles['moneyline-odds']}`}>
-        {moneylineStr}
-      </td>
-      <td className={`${styles['td']} ${styles['win-exp']}`} style={winExpStyle}>
-        {winExpStr}
-      </td>
-      <td className={`${styles['td']} ${styles['score']} ${pointsScoredClassName}`}>
-        {pointsScored ?? "-"}
-      </td>
-    </tr>
+    <TableRow>
+      <TableTd type={TdType.LeftImg}>
+        <TeamLogoImageComponent teamName={teamName} />
+      </TableTd>
+      <TableTd>
+        <InlineTeamNameWithRank teamName={teamName} rank={teamEloRatingRank} />
+      </TableTd>
+      <TableTd properties={pointSpreadProperties} type={TdType.Number}>{teamPointSpreadNo}</TableTd>
+      <TableTd properties={moneylineProperties} type={TdType.Number}>{teamMoneylineStr}</TableTd>
+      <TableTd properties={winExpProperties} type={TdType.Number}>{`${(teamEloWinExp * 100).toFixed(2)}%`}</TableTd>
+      <TableTd checkmark={didWin} properties={pointsScoredProperties} type={TdType.Number}>{pointsScored ?? '-'}</TableTd>
+    </TableRow>
   );
 }
 
@@ -162,6 +155,5 @@ function getWinExpColor(winExp: number): string {
   // for the g-value.
   const g: number = (winExp * 100) + floorG;
   const b: number = 233;
-
   return `rgb(${r}, ${g}, ${b})`;
 }

@@ -1,0 +1,50 @@
+.td {
+
+}
+
+.td-title {
+  text-align: left;
+  line-height: 1;
+  letter-spacing: -0.3px;
+  font-weight: 500;
+  margin-left: 3px;
+  vertical-align: middle;
+
+  min-width: 130px;
+  max-width: inherit;
+  height: 28px;
+}
+
+.td-left-img {
+  width: 40px;
+}
+
+.td-left-img img {
+  height: 28px;
+}
+
+.td-number {
+  background-color: #eee;
+  width: 50px;
+
+  border-left: 3px solid #fff;
+  border-right: 3px solid #fff;
+  
+  letter-spacing: -1px;
+  font-size: 13px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600;
+
+  max-width: 50px;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+.checkmark:before {
+  content: '✓';
+  margin-right: 5px;
+  font-size: 14px;
+  color: #000;
+}

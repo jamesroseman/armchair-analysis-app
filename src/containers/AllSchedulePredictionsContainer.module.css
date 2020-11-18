@@ -44,18 +44,6 @@
   margin-right: 18px;
 }
 
-.matchup-box-card-highlight {
-  outline: 1px solid rgb(221, 167, 123);
-}
-
-.matchup-box-card-highlight-correct {
-  outline: 1px solid rgb(8,188,188);
-}
-
-.matchup-box-card-highlight-incorrect {
-  outline: 1px solid rgb(244, 97, 151);
-}
-
 .header {
   display: inline-flex;
   font-size: 55px;

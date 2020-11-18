@@ -1,0 +1,19 @@
+.card-root {
+  background: #fff;
+}
+
+.card-title {
+  font-size: 11px;
+  padding-left: 7px;
+  padding-bottom: 3px;
+  font-weight: 500;
+  color: #888;
+  letter-spacing: -0.15px;
+}
+
+.card-body {
+  background: #fff;
+  border: 7px solid #fff;
+  outline: 1px solid #f0f0f0;
+  box-shadow: 1px 1px 5px rgba(0,0,0,.2);
+}

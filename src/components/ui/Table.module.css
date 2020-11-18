@@ -1,0 +1,8 @@
+.table {
+  background: #fff;
+  width: 100%;
+}
+
+.table td {
+  border-left: 1px solid #fff;
+}

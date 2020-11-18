@@ -1,0 +1,19 @@
+.team-name-with-rank {
+  display: flex;
+  flex-direction: row;
+}
+
+.team-name {
+
+}
+
+.rank {
+  text-align: left;
+  vertical-align: top;
+  margin-left: 3px;
+  padding-bottom: 5px;
+
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: -0.7px;
+}
