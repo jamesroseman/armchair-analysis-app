@@ -3,6 +3,42 @@ import { TeamRecord } from "../types/TeamTypes";
 
 export class SchedulePredictionAggregationMetricUtils {
   /**
+   * A metric is considered "uneven" when one team is in the top-5 
+   * and the other is in the bottom-5 allowed of that metric
+   */
+  public static isMetricUneven(metric: SchedulePredictionAggregationMetric): boolean {
+    const { 
+      homeTeamMetricRank,
+      visitingTeamMetricRank,
+      allowedHomeTeamMetricRank,
+      allowedVisitingTeamMetricRank
+    } = metric;
+    const isHomeUneven: boolean = homeTeamMetricRank <= 5 && (allowedVisitingTeamMetricRank ?? 1) >= 27;
+    const isVisitingUneven: boolean = visitingTeamMetricRank <= 5 && (allowedHomeTeamMetricRank ?? 1) >= 27;
+    return isHomeUneven || isVisitingUneven;
+  }
+
+  /**
+   * A metric is considered "significant" when one team is ranked very high or very low
+   */
+  public static isMetricSignificant(
+    metric: SchedulePredictionAggregationMetric,
+    threshold: number = 3
+  ): boolean {
+    const { 
+      homeTeamMetricRank,
+      visitingTeamMetricRank,
+      allowedHomeTeamMetricRank,
+      allowedVisitingTeamMetricRank
+    } = metric;
+    const highPass: number = Math.min(threshold, 1);
+    const lowPass: number = Math.max((32 - threshold), 32);
+    const isHomeSignificant: boolean = homeTeamMetricRank <= highPass || (allowedVisitingTeamMetricRank ?? 1) >= lowPass;
+    const isVisitingSignificant: boolean = visitingTeamMetricRank <= highPass && (allowedHomeTeamMetricRank ?? 1) >= lowPass;
+    return isHomeSignificant || isVisitingSignificant;
+  }
+
+  /**
    * Helper method to get home TeamRecord from metrics.
    */
   public static getHomeRecordFromMetrics(

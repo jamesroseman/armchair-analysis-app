@@ -2,16 +2,15 @@ import React, { CSSProperties } from 'react';
 import { TeamName } from '../types/ModelConstantTypes';
 import { SchedulePrediction } from '../types/SchedulePredictionTypes';
 import { SchedulePredictionUtils } from '../utils/SchedulePredictionUtils';
-import { TeamNameUtils } from '../utils/TeamNameUtils';
 import { TimeUtils } from '../utils/TimeUtils';
 import InlineTeamNameWithRank from './InlineTeamNameWithRank';
 import TeamLogoImageComponent from './TeamLogoImageComponent';
-import styles from './TeamMatchupBoxComponent.module.css';
 import Card from './ui/Card';
 import Table from './ui/Table';
 import TableBody from './ui/TableBody';
 import TableRow from './ui/TableRow';
 import TableTd, { TdType } from './ui/TableTd';
+import Link from './ui/Link';
 
 type TeamMatchupBoxComponentProps = {
   schedulePrediction: SchedulePrediction,
@@ -27,6 +26,7 @@ export default ({
   shouldDisplayMoneylineAsDecimal = true
 }: TeamMatchupBoxComponentProps) => {
   const { 
+    scheduleId,
     visitingTeamName,
     visitingTeamEloRatingRank,
     visitingTeamEloWinExp,
@@ -52,43 +52,43 @@ export default ({
     : undefined;
   }
 
-  // Display 
-
   const timeStr: string = TimeUtils.getPrintableTimeFromDate(schedulePrediction.date);
   const visitingMoneylineStr: string = getMoneylineStr(bettingOdds?.visitingMoneylineOdds ?? 1, shouldDisplayMoneylineAsDecimal);
   const homeMoneylineStr: string = getMoneylineStr(bettingOdds?.homeMoneylineOdds ?? 1, shouldDisplayMoneylineAsDecimal);
 
   return (
-    <Card
-      properties={{ width: 350, ...properties }}
-      bodyProperties={bodyProperties}
-      title={isScheduled ? timeStr : "FINAL"}
-    >
-      <Table>
-        <TableBody>
-          {renderRowForTeam(
-            visitingTeamName, 
-            visitorPointSpreadNo, 
-            visitingTeamEloRatingRank, 
-            visitingTeamEloWinExp, 
-            visitingMoneylineStr,
-            isScheduled,
-            didVisitorWin,
-            game?.pointsScoredVisitorAmt,
-          )}
-          {renderRowForTeam(
-            homeTeamName, 
-            homePointSpreadNo, 
-            homeTeamEloRatingRank, 
-            homeTeamEloWinExp, 
-            homeMoneylineStr,
-            isScheduled,
-            didHomeWin,
-            game?.pointsScoredHomeAmt,
-          )}
-        </TableBody>
-      </Table>
-    </Card>
+    <Link href={`/s/${scheduleId}`}>
+      <Card
+        properties={{ width: 350, ...properties }}
+        bodyProperties={bodyProperties}
+        title={isScheduled ? timeStr : "FINAL"}
+      >
+        <Table>
+          <TableBody>
+            {renderRowForTeam(
+              visitingTeamName, 
+              visitorPointSpreadNo, 
+              visitingTeamEloRatingRank, 
+              visitingTeamEloWinExp, 
+              visitingMoneylineStr,
+              isScheduled,
+              didVisitorWin,
+              game?.pointsScoredVisitorAmt,
+            )}
+            {renderRowForTeam(
+              homeTeamName, 
+              homePointSpreadNo, 
+              homeTeamEloRatingRank, 
+              homeTeamEloWinExp, 
+              homeMoneylineStr,
+              isScheduled,
+              didHomeWin,
+              game?.pointsScoredHomeAmt,
+            )}
+          </TableBody>
+        </Table>
+      </Card>
+    </Link>
   );
 };
 

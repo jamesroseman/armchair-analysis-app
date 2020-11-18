@@ -9,6 +9,7 @@ import { TimeUtils } from '../utils/TimeUtils';
 import styles from './AllSchedulePredictionsContainer.module.css';
 import { BettingOddsUtils, BettingSimulation } from '../utils/BettingOddsUtils';
 import BettingSimulationResultsComponent from '../components/BettingSimulationResultsComponent';
+import { CORRECT_COLOR, HIGHLIGHT_COLOR, INCORRECT_COLOR } from '../components/CSSConstants';
 
 type AllSchedulePredictionsContainerProps = {
   schedulePredictions: SchedulePrediction[],
@@ -250,14 +251,11 @@ function getPropertiesForHighlightedMatchupBox(
   hasOccurred: boolean,
   isCorrect: boolean
 ): string {
-  const highlightOutline: string = '1px solid rgb(221, 167, 123)';
-  const correctOutline: string = '1px solid rgb(8,188,188)';
-  const incorrectOutline: string = '1px solid rgb(244, 97, 151)';
   if (hasOccurred && isCorrect) {
-    return correctOutline;
+    return `1px solid ${CORRECT_COLOR}`;
   }
   if (hasOccurred && !isCorrect) {
-    return incorrectOutline;
+    return `1px solid ${INCORRECT_COLOR}`
   }
-  return highlightOutline;
+  return `1px solid ${HIGHLIGHT_COLOR}`;
 }

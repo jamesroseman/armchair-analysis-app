@@ -18,6 +18,8 @@ export const GetSchedulePredictionQuery = gql`
       date,
       homeTeamName,
       visitingTeamName,
+      homeTeamEloRatingRank,
+      visitingTeamEloRatingRank,
       metrics {
         metricName
         homeTeamMetricRank

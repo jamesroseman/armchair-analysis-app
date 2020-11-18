@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from 'react';
-import styles from './TableHead.module.css';
 
 export type TableHeadProps = {
 

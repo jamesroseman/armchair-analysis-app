@@ -1,255 +1,243 @@
-import React from 'react';
+import React, { useState, CSSProperties } from 'react';
 import { SchedulePrediction } from '../types/SchedulePredictionTypes';
 import { SchedulePredictionAggregationMetric } from '../types/SchedulePredictionAggregationMetricTypes';
 import styles from './HeadToHeadTableComponent.module.css';
+import { TeamName } from '../types/ModelConstantTypes';
+import Table from './ui/Table';
+import Card from './ui/Card';
+import TableHead from './ui/TableHead';
+import TableRow from './ui/TableRow';
+import TableTh, { ThType } from './ui/TableTh';
+import TableBody from './ui/TableBody';
+import TableTd, { TdType } from './ui/TableTd';
+import InlineTeamNameWithRank from './InlineTeamNameWithRank';
+import TeamLogoImageComponent from './TeamLogoImageComponent';
+import { SchedulePredictionAggregationMetricUtils } from '../utils/SchedulePredictionAggregationMetricUtils';
+import { HIGHLIGHT_COLOR, INCORRECT_COLOR } from './CSSConstants';
+import { TeamNameUtils } from '../utils/TeamNameUtils';
+import tinycolor from 'tinycolor2';
 
 type HeadToHeadTableComponentProps = {
   schedulePrediction: SchedulePrediction
 }
 
-export default ({ schedulePrediction }: HeadToHeadTableComponentProps) => {
-  const { metrics } = schedulePrediction;
+export default ({ 
+  schedulePrediction
+}: HeadToHeadTableComponentProps) => {
+  const { 
+    homeTeamName,
+    homeTeamEloRatingRank,
+    visitingTeamName, 
+    visitingTeamEloRatingRank,
+    metrics 
+  } = schedulePrediction;
+  const [shouldOnlyDisplayUnevenMetrics, setShouldOnlyDisplayUnevenMetrics] = useState(false);
+  const [shouldOnlyDisplaySignificantMetrics, setShouldOnlyDisplaySignificantMetrics] = useState(false);
 
   return (
-    <div className={styles['head-to-head']}>
-      {metrics?.map(genTableForMetric)}
+    <div className={styles['root']}>
+      <div className={styles['toggles']}>
+        <div className={styles['toggle']}>
+          <div className={styles['toggle-title']}>
+            Only Display Uneven Metrics?
+          </div>
+          <div className={styles['toggle-checkbox']}>
+            <input 
+              type="checkbox" 
+              checked={shouldOnlyDisplayUnevenMetrics} 
+              onChange={() => setShouldOnlyDisplayUnevenMetrics(!shouldOnlyDisplayUnevenMetrics)} 
+            />
+          </div>
+        </div>
+        <div className={styles['toggle']}>
+          <div className={styles['toggle-title']}>
+            Only Display Significant Metrics?
+          </div>
+          <div className={styles['toggle-checkbox']}>
+            <input 
+              type="checkbox" 
+              checked={shouldOnlyDisplaySignificantMetrics} 
+              onChange={() => setShouldOnlyDisplaySignificantMetrics(!shouldOnlyDisplaySignificantMetrics)} 
+            />
+          </div>
+        </div>
+      </div>
+      <div className={styles['head-to-head']}>
+        {metrics?.map((metric: SchedulePredictionAggregationMetric) => genTableForMetric(
+          homeTeamName,
+          homeTeamEloRatingRank,
+          visitingTeamName,
+          visitingTeamEloRatingRank,
+          metric,
+          shouldOnlyDisplayUnevenMetrics,
+          shouldOnlyDisplaySignificantMetrics
+        ))}
+      </div>
     </div>
   );
 }
 
-function genTableForMetric(metric: SchedulePredictionAggregationMetric): JSX.Element {
-  // A metric is considered significant if either team is in the top-2, or one team is in the top-5
-  // and the other is in the bottom-5 allowed.
-  const {
-    homeTeamMetricRank,
-    visitingTeamMetricRank,
-    allowedHomeTeamMetricRank,
-    allowedVisitingTeamMetricRank
-  } = metric;
-  const isTop3Metric: boolean = homeTeamMetricRank < 2 || visitingTeamMetricRank < 2;
-  const isBot5HomeMetric: boolean = (visitingTeamMetricRank < 5 && (allowedHomeTeamMetricRank ?? 0) > 27);
-  const isBot5VisitingMetric: boolean = (homeTeamMetricRank < 5 && (allowedVisitingTeamMetricRank ?? 0) > 27);
-  if (!isTop3Metric && !isBot5HomeMetric && !isBot5VisitingMetric) {
+function genTableForMetric(
+  homeTeamName: TeamName,
+  homeTeamEloRatingRank: number,
+  visitingTeamName: TeamName,
+  visitingTeamEloRatingRank: number,
+  metric: SchedulePredictionAggregationMetric,
+  shouldOnlyDisplayUnevenMetrics: boolean = false,
+  shouldOnlyDisplaySignificantMetrics: boolean = false,
+): JSX.Element {
+  const isUnevenMetric: boolean = SchedulePredictionAggregationMetricUtils.isMetricUneven(metric);
+  const isSignificantMetric: boolean = SchedulePredictionAggregationMetricUtils.isMetricSignificant(metric, 5);
+  if (shouldOnlyDisplayUnevenMetrics && !isUnevenMetric) {
     return <></>;
   }
-  return (
-    <table className={styles['table']} key={`table-${metric.schedulePredictionId}`}>
-      <tbody>
-        {genRowsForMetric(metric)}
-      </tbody>
-    </table>
-  );
-}
-
-function genRowsForMetric(metric: SchedulePredictionAggregationMetric): JSX.Element[] {
-  const isAllowableMetric: boolean = metric.allowedMetricName !== null;
-  if (isAllowableMetric) {
-    return genRowsForAllowableMetric(metric);
+  if (shouldOnlyDisplaySignificantMetrics && !isSignificantMetric) {
+    return <></>;
+  }
+  if (shouldOnlyDisplaySignificantMetrics && shouldOnlyDisplayUnevenMetrics && (!isUnevenMetric || !isSignificantMetric)) {
+    return <></>;
   }
 
   const {
-    metricName,
     homeTeamMetricRank,
     homeTeamMetricAmt,
     homeTeamMetricAvg,
-    visitingTeamMetricRank,
-    visitingTeamMetricAmt,
-    visitingTeamMetricAvg,
-  } = metric;
-
-  const titleTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['title']} ${styles['visitor-td']}`}>
-        {metricName}
-      </td>
-      <td className={styles['mid-td']}>
-      </td>
-      <td className={`${styles['td']} ${styles['title']} ${styles['home-td']}`}>
-        {metricName}
-      </td>
-    </tr>
-  );
-  const rankTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        #{visitingTeamMetricRank} 
-      </td>
-      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
-        Rank
-      </td>
-      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        #{homeTeamMetricRank}
-      </td>
-    </tr>
-  );
-  const totalTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        {visitingTeamMetricAmt} 
-      </td>
-      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
-        Total
-      </td>
-      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        {homeTeamMetricAmt}
-      </td>
-    </tr>
-  );
-  const avgTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        {visitingTeamMetricAvg.toFixed(1)}
-      </td>
-      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
-        Avg
-      </td>
-      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        {homeTeamMetricAvg.toFixed(1)}
-      </td>
-    </tr>
-  );
-  return [
-    titleTr,
-    rankTr,
-    totalTr,
-    avgTr
-  ];
-}
-
-function genRowsForAllowableMetric(metric: SchedulePredictionAggregationMetric): JSX.Element[] {
-  const {
-    metricName,
-    homeTeamMetricRank,
-    homeTeamMetricAmt,
-    homeTeamMetricAvg,
-    visitingTeamMetricRank,
-    visitingTeamMetricAmt,
-    visitingTeamMetricAvg,
-    allowedMetricName,
     allowedHomeTeamMetricRank,
     allowedHomeTeamMetricAmt,
     allowedHomeTeamMetricAvg,
+    visitingTeamMetricRank,
+    visitingTeamMetricAmt,
+    visitingTeamMetricAvg,
     allowedVisitingTeamMetricRank,
     allowedVisitingTeamMetricAmt,
     allowedVisitingTeamMetricAvg,
+    metricName
   } = metric;
 
-  const titleTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['title']} ${styles['visitor-td']}`}>
-        {formatMetricName(metricName)}
-      </td>
-      <td className={styles['mid-td']}>
-      </td>
-      <td className={`${styles['td']} ${styles['title']} ${styles['home-td']}`}>
-        {formatMetricName(allowedMetricName ?? "")}
-      </td>
-    </tr>
-  );
-  const allowedTitleTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['title']} ${styles['visitor-td']}`}>
-        {formatMetricName(allowedMetricName ?? "")}
-      </td>
-      <td className={styles['mid-td']}>
-      </td>
-      <td className={`${styles['td']} ${styles['title']} ${styles['home-td']}`}>
-        {formatMetricName(metricName)}
-      </td>
-    </tr>
-  );
+  const cardProperties: CSSProperties = {
+    marginBottom: 20,
+  }
 
-  const rankTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        #{visitingTeamMetricRank} 
-      </td>
-      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
-        Rank
-      </td>
-      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        #{allowedHomeTeamMetricRank}
-      </td>
-    </tr>
-  );
-  const allowedRankTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        #{allowedVisitingTeamMetricRank} 
-      </td>
-      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
-        Rank
-      </td>
-      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        #{homeTeamMetricRank}
-      </td>
-    </tr>
-  );
+  const cardBodyProperties: CSSProperties = getCardBodyProperties(isSignificantMetric, isUnevenMetric);
 
-  const totalTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        {visitingTeamMetricAmt} 
-      </td>
-      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
-        Total
-      </td>
-      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        {allowedHomeTeamMetricAmt}
-      </td>
-    </tr>
+  return (
+    <Card 
+      title={formatMetricName(metricName)}
+      properties={cardProperties}
+      bodyProperties={cardBodyProperties}
+    >
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableTh></TableTh>
+            <TableTh></TableTh>
+            <TableTh type={ThType.Number}>Total</TableTh>
+            <TableTh type={ThType.Number}>Avg.</TableTh>
+            <TableTh type={ThType.Number}>Rank</TableTh>
+            <TableTh type={ThType.Number}>Total All.</TableTh>
+            <TableTh type={ThType.Number}>Avg. All.</TableTh>
+            <TableTh type={ThType.Number}>Rank All.</TableTh>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {renderMetricRow(
+            isSignificantMetric,
+            isUnevenMetric,
+            visitingTeamName,
+            visitingTeamEloRatingRank,
+            visitingTeamMetricRank,
+            visitingTeamMetricAmt,
+            visitingTeamMetricAvg,
+            allowedVisitingTeamMetricRank,
+            allowedVisitingTeamMetricAmt,
+            allowedVisitingTeamMetricAvg,
+          )}
+          {renderMetricRow(
+            isSignificantMetric,
+            isUnevenMetric,
+            homeTeamName,
+            homeTeamEloRatingRank,
+            homeTeamMetricRank,
+            homeTeamMetricAmt,
+            homeTeamMetricAvg,
+            allowedHomeTeamMetricRank,
+            allowedHomeTeamMetricAmt,
+            allowedHomeTeamMetricAvg,
+          )}
+        </TableBody>
+      </Table>
+    </Card>
   );
-  const allowedTotalTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        {allowedVisitingTeamMetricAmt} 
-      </td>
-      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
-        Total
-      </td>
-      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        {homeTeamMetricAmt}
-      </td>
-    </tr>
-  );
+}
 
-  const avgTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        {visitingTeamMetricAvg.toFixed(1)}
-      </td>
-      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
-        Avg
-      </td>
-      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        {(allowedHomeTeamMetricAvg ?? 0).toFixed(1)}
-      </td>
-    </tr>
+function renderMetricRow(
+  isSignificantMetric: boolean,
+  isUnevenMetric: boolean,
+  teamName: TeamName,
+  teamEloRatingRank: number,
+  teamMetricRank: number,
+  teamMetricAmt: number,
+  teamMetricAvg: number,
+  allowedTeamMetricRank?: number,
+  allowedTeamMetricAmt?: number,
+  allowedTeamMetricAvg?: number,
+): JSX.Element {
+  const tdRankProperties: CSSProperties = getTdRankProperties(isSignificantMetric, isUnevenMetric, teamName);
+  return (
+    <TableRow>
+      <TableTd type={TdType.LeftImg}>
+        <TeamLogoImageComponent teamName={teamName} />
+      </TableTd>
+      <TableTd>
+        <InlineTeamNameWithRank teamName={teamName} rank={teamEloRatingRank} />
+      </TableTd>
+      <TableTd type={TdType.Number}>{teamMetricAmt}</TableTd>
+      <TableTd type={TdType.Number}>{teamMetricAvg.toFixed(1)}</TableTd>
+      <TableTd properties={tdRankProperties} type={TdType.Number}>#{teamMetricRank}</TableTd>
+      <TableTd type={TdType.Number}>{allowedTeamMetricAmt ?? '-'}</TableTd>
+      <TableTd type={TdType.Number}>{allowedTeamMetricAvg?.toFixed(1) ?? '-'}</TableTd>
+      <TableTd properties={tdRankProperties} type={TdType.Number}>{allowedTeamMetricRank ? `#${allowedTeamMetricRank}` : '-'}</TableTd>
+    </TableRow>
   );
-  const allowedAvgTr: JSX.Element = (
-    <tr className={`${styles['tr']}`}>
-      <td className={`${styles['td']} ${styles['data']} ${styles['visitor-td']}`}>
-        {(allowedVisitingTeamMetricAvg ?? 0).toFixed(1)}
-      </td>
-      <td className={`${styles['mid-td']} ${styles['mid-title']}`}>
-        Avg
-      </td>
-      <td className={`${styles['td']} ${styles['data']} ${styles['home-td']}`}>
-        {homeTeamMetricAvg.toFixed(1)}
-      </td>
-    </tr>
-  );
+}
 
-  return [
-    titleTr,
-    rankTr,
-    totalTr,
-    avgTr,
-    allowedTitleTr,
-    allowedRankTr,
-    allowedTotalTr,
-    allowedAvgTr
-  ];
+function getCardBodyProperties(isSignificantMetric: boolean, isUnevenMetric: boolean): CSSProperties {
+  if (isSignificantMetric) {
+    return {
+      outline: `1px solid ${HIGHLIGHT_COLOR}`,
+    };
+  }
+  if (isUnevenMetric) {
+    return {
+      outline: `1px solid ${INCORRECT_COLOR}`,
+    };
+  }
+  return {};
+}
+
+function getTdRankProperties(
+  isSignificantMetric: boolean, 
+  isUnevenMetric: boolean,
+  teamName: TeamName
+): CSSProperties {
+  if (isSignificantMetric || isUnevenMetric) {
+    // Choose the right legible combination of primary/secondary/white/black colors.
+    const primaryColor: string = TeamNameUtils.getPrimaryColorFromTeamName(teamName);
+    const isPrimaryColorLight: boolean = tinycolor(primaryColor).isLight();
+    const secondaryColor: string = TeamNameUtils.getSecondaryColorFromTeamName(teamName);
+    const isSecondaryColorLight: boolean = tinycolor(secondaryColor).isLight();
+    // Prefer a dark text on a light background
+    const backgroundColor: string = isPrimaryColorLight ? primaryColor : secondaryColor;
+    const fontColor: string = tinycolor(backgroundColor).isLight()
+    ? (isSecondaryColorLight ? '#000' : secondaryColor)
+    : (isSecondaryColorLight ? secondaryColor : '#fff');
+    
+    return {
+      backgroundColor: backgroundColor,
+      color: fontColor
+    }
+  }
+  return {};
 }
 
 // Metric names are in CamelCase which is not human-friendly

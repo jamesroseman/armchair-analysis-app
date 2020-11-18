@@ -1,5 +1,4 @@
 import React, { CSSProperties } from 'react';
-import { SchedulePredictionAggregationMetric } from '../types/SchedulePredictionAggregationMetricTypes';
 import { SchedulePrediction } from '../types/SchedulePredictionTypes';
 import { TeamRecord } from '../types/TeamTypes';
 import { SchedulePredictionAggregationMetricUtils } from '../utils/SchedulePredictionAggregationMetricUtils';

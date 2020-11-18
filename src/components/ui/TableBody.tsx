@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from 'react';
-import styles from './TableBody.module.css';
 
 export type TableBodyProps = {
 
